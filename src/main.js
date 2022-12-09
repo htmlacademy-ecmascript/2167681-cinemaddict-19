@@ -14,7 +14,7 @@ const body = document.querySelector('body');
 
 render(new NewUserRangView(), siteHeaderElement);
 render(new NewFiltersFilmView(), siteMainElement);
-render(new NewPopuppView, body);
+render(new NewPopuppView(), body);
 render(new NewNavFilmView(), siteMainElement, RenderPosition.AFTERBEGIN);
 
 
