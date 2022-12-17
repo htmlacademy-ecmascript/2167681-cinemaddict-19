@@ -20,7 +20,7 @@ const nowDate = () => new Date();
 function getRandomIntInclusiveNotFloor(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
-  const result = (Math.random() * (max - min + 1) + min);
+  const result = Math.random() * (max - min + 1) + min;
   if (result >= 10) {
     return 10;
   }
