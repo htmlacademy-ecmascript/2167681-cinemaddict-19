@@ -1,13 +1,17 @@
 import dayjs from 'dayjs';
 
 
-const DATE_FORMAT = 'D MMMM';
+const DATE_FORMAT = 'D MMMM YYYY';
 
 // функция генерации случайного числа из заданного диапазонв
 function getRandomIntInclusive(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1) + min);
+  const result = Math.floor(Math.random() * (max - min + 1) + min);
+  if (result >= 10) {
+    return 10;
+  }
+  return result.toFixed(1);
 }
 
 //функция изменения отображения даты
