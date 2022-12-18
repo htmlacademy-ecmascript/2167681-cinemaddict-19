@@ -14,7 +14,7 @@ export default class ContentPresenter {
   #filmInfoModel;
   #mainBody;
   #cardFilms;
-  constructor({filmContainer, filmInfoModel, mainBody}) {
+  constructor({filmContainer, filmInfoModel, mainBody,}) {
     this.#filmContainer = filmContainer;
     this.#filmInfoModel = filmInfoModel;
     this.#mainBody = mainBody;
@@ -28,10 +28,51 @@ export default class ContentPresenter {
     render(this.#cardsContainer, this.#mainContainersComponent.element);
 
     for ( let i = 0; i < this.#cardFilms.length; i++ ) {
-      render(new NewCardFilmView({card: this.#cardFilms[i]}), this.#cardsContainer.element);
+      this.#renderCards(this.#cardFilms[i]);
     }
-    render(new NewPopuppView({card: this.#cardFilms}), this.#mainBody);
+
+
     render(new NewShowMoreButtonView, this.#mainContainersComponent.element);
+  }
+
+  // функция отрисовки карточек
+  #renderCards(card) {
+
+    const filmCardComponent = new NewCardFilmView({card});
+    const popupComponent = new NewPopuppView({card});
+
+    // функция открытия попапа "подробности фильма"
+    const openPopupDetails = () => {
+      //this.#mainBody.classList.add('hide-overflow');
+      render (popupComponent, this.#mainBody);
+    };
+    // функция закрытие попапа "подробности фильма"
+    const closedPopupDetails = () => {
+      //this.#mainBody.classList.remove('hide-overflow');
+      this.#mainBody.removeChild(popupComponent.element);
+    };
+    //закрытие поп аппа на ескейп
+    const onEscKeyClosed = (evt) => {
+      if(evt.key === 'Escape' || evt.key === 'Esc' ) {
+        evt.preventDefault();
+        closedPopupDetails();
+        document.removeEventListener('keydown', onEscKeyClosed);
+      }
+    };
+
+    render (filmCardComponent, this.#cardsContainer.element);
+    // обработчик открытие попапа "подробности фильма"
+    filmCardComponent.element.querySelector('img').addEventListener('click', () => {
+      openPopupDetails();
+      document.addEventListener('keydown', onEscKeyClosed);
+
+    });
+    // обработчик закрытие попапа "подробности фильма"
+    popupComponent.element.querySelector('.film-details__close-btn').addEventListener('click', ()=> {
+      closedPopupDetails();
+      document.removeEventListener('keydown', onEscKeyClosed);
+    });
+
   }
 }
 

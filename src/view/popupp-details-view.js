@@ -3,7 +3,7 @@ import { humanizeTaskDueDate } from '../util.js';
 
 // попапп с подроным описанием фильма
 const createNewPopuppTemplate = (card) => {
-  const { filmInfo, userDetails} = card[0];
+  const { filmInfo, userDetails} = card;
   const vDate = humanizeTaskDueDate(filmInfo.release.date);
   return(
     `<section class="film-details">

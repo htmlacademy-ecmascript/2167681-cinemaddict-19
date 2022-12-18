@@ -1,6 +1,7 @@
 import {createElement} from '../render.js';
 import { humanizeTaskDueDate } from '../util.js';
 
+
 // карточка с фильмом
 const createNewCardFilmTemplate = (card) => {
   const { comments, filmInfo, userDetails} = card;
@@ -34,9 +35,11 @@ export default class NewCardFilmView {
   #card;
   #element;
 
+
   constructor({card}) {
     this.#card = card;
   }
+
 
   get template() {
     return createNewCardFilmTemplate(this.#card);
