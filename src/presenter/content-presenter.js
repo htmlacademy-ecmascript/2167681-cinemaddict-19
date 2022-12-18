@@ -43,12 +43,12 @@ export default class ContentPresenter {
 
     // функция открытия попапа "подробности фильма"
     const openPopupDetails = () => {
-      //this.#mainBody.classList.add('hide-overflow');
+      this.#mainBody.classList.add('hide-overflow');
       render (popupComponent, this.#mainBody);
     };
     // функция закрытие попапа "подробности фильма"
     const closedPopupDetails = () => {
-      //this.#mainBody.classList.remove('hide-overflow');
+      this.#mainBody.classList.remove('hide-overflow');
       this.#mainBody.removeChild(popupComponent.element);
     };
     //закрытие поп аппа на ескейп
