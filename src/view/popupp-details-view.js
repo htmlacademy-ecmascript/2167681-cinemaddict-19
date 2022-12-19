@@ -3,7 +3,7 @@ import { humanizeTaskDueDate } from '../util.js';
 
 // попапп с подроным описанием фильма
 const createNewPopuppTemplate = (card) => {
-  const { filmInfo, userDetails} = card[0];
+  const { filmInfo, userDetails} = card;
   const vDate = humanizeTaskDueDate(filmInfo.release.date);
   return(
     `<section class="film-details">
@@ -122,22 +122,25 @@ const createNewPopuppTemplate = (card) => {
   );
 };
 export default class NewPopuppView {
+  #card;
+  #element;
+
   constructor ({card}) {
-    this.card = card;
+    this.#card = card;
   }
 
-  getTemplate() {
-    return createNewPopuppTemplate(this.card);
+  get template() {
+    return createNewPopuppTemplate(this.#card);
   }
 
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if(!this.#element) {
+      this.#element = createElement(this.template);
     }
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
