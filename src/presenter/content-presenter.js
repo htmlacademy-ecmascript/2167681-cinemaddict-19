@@ -70,7 +70,6 @@ export default class ContentPresenter {
     // обработчик закрытие попапа "подробности фильма"
     popupComponent.element.querySelector('.film-details__close-btn').addEventListener('click', ()=> {
       closedPopupDetails();
-      document.removeEventListener('keydown', onEscKeyClosed);
     });
 
   }
