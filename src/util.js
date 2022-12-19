@@ -7,7 +7,8 @@ const DATE_FORMAT = 'D MMMM YYYY';
 function getRandomIntInclusive(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
-  return (Math.random() * (max - min + 1) + min).toFixed(1);
+  return (Math.random() * (max - min + 1) + min);
+
 }
 
 //функция изменения отображения даты
@@ -21,10 +22,8 @@ function getRandomIntInclusiveNotFloor(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   const result = Math.random() * (max - min + 1) + min;
-  if (result >= 10) {
-    return 10;
-  }
-  return result.toFixed(1);
+  return result >= 10 ? 10 : result.toFixed(1);
+
 }
 //функция случайного элемента массива
 function getRandomIntInclusiveArrayElement(array) {
