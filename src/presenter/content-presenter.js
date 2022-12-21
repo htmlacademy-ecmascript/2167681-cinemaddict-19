@@ -1,19 +1,25 @@
-import {render} from '../render.js';
+import {render, RenderPosition} from '../render.js';
 import NewCardFilmView from '../view/card-film-view.js';
 import NewFilmsMainContainerView from '../view/films-main-container-view.js';
 import NewMainContainersComponentView from '../view/main-containers-component-view.js';
 import NewShowMoreButtonView from '../view/show-more-button-view.js';
 import NewCardsFilmContainerView from '../view/cards-film-container-view.js';
 import NewPopuppView from '../view/popupp-details-view.js';
+import NewFilterTitleView from '../view/filter-title-view.js';
+
+const TASK_COUNT_PER_STEP = 5;
 
 export default class ContentPresenter {
   #filmsMainContainer = new NewFilmsMainContainerView();
   #mainContainersComponent = new NewMainContainersComponentView();
   #cardsContainer = new NewCardsFilmContainerView();
+  #filterTitleView = new NewFilterTitleView();
   #filmContainer;
   #filmInfoModel;
   #mainBody;
   #cardFilms;
+  #loadMoreButtonComponent = null;
+  #arrayCopy = [];
 
   constructor({filmContainer, filmInfoModel, mainBody,}) {
     this.#filmContainer = filmContainer;
@@ -23,21 +29,36 @@ export default class ContentPresenter {
 
   init() {
     this.#cardFilms = [...this.#filmInfoModel.cards];
+    this.#arrayCopy = this.#cardFilms.slice();
     this.#renderMainContainer();
-
   }
 
+  //функция кнопки 'show more'
+  #loadMoreButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    const pieceOfArray = this.#arrayCopy.splice(0, TASK_COUNT_PER_STEP);
+
+    for(let i = 0; i < pieceOfArray.length; i++) {
+      this.#renderCards(pieceOfArray[i]);
+    }
+
+    if (this.#arrayCopy.length === 0) {
+      this.#mainContainersComponent.element.querySelector('.films-list__show-more')
+        .classList.add('visually-hidden');
+    }
+  };
 
   //отрисовка главного контайнера
   #renderMainContainer() {
-    const firtsFiveCard = this.#cardFilms.splice(0,5);
+    const firtsFiveCard = this.#arrayCopy.splice(0, TASK_COUNT_PER_STEP);
 
     render(this.#filmsMainContainer, this.#filmContainer);
     render(this.#mainContainersComponent, this.#filmsMainContainer.element);
     render(this.#cardsContainer, this.#mainContainersComponent.element);
+    render(this.#filterTitleView, this.#mainContainersComponent.element, RenderPosition.AFTERBEGIN);
 
     if (firtsFiveCard.length === 0) {
-      this.#mainContainersComponent.element.querySelector('.films-list__title').textContent = 'There are no movies in our database';
+      this.#filterTitleView.element.textContent = 'There are no movies in our database';
       this.#mainContainersComponent.element.querySelector('.films-list__title').classList.remove('visually-hidden');
     } else {
       for ( let i = 0; i < firtsFiveCard.length; i++ ) {
@@ -45,7 +66,11 @@ export default class ContentPresenter {
       }
     }
 
-    this.#showMoreButton(this.#cardFilms);
+    if (this.#arrayCopy.length > TASK_COUNT_PER_STEP) {
+      this.#loadMoreButtonComponent = new NewShowMoreButtonView();
+      render(this.#loadMoreButtonComponent, this.#mainContainersComponent.element);
+      this.#loadMoreButtonComponent.element.addEventListener('click', this.#loadMoreButtonClickHandler);
+    }
 
   }
 
@@ -92,28 +117,6 @@ export default class ContentPresenter {
 
   }
 
-  #showMoreButton(restCards) {
-    const cards = restCards;
-    const loadButton = new NewShowMoreButtonView();
-    render(loadButton, this.#mainContainersComponent.element);
-    // функция отрисовки карточек для кнопи 'show more'
-    const renderRestCard = (arrayFilms) => {
-      const jopa = arrayFilms.splice(0, 5);
-
-      for(let i = 0; i < jopa.length; i++) {
-        this.#renderCards(jopa[i]);
-        if (arrayFilms.length === 0) {
-          this.#mainContainersComponent.element.querySelector('.films-list__show-more')
-            .classList.add('visually-hidden');
-        }
-      }
-    };
-
-    //обработчик событий на 'show more'
-    this.#mainContainersComponent.element.querySelector('.films-list__show-more').addEventListener('click', () => {
-      renderRestCard(cards);
-    });
-  }
 }
 
 
