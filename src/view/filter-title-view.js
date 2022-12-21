@@ -2,7 +2,7 @@ import {createElement} from '../render.js';
 
 // контейнер для карточек с фильмом (вкладывается в main-containers-componets-view.js )
 const createFilterTitleViewTemplate = () =>
-  '<h2 class="films-list__title visually-hidden">ЖОПА</h2>';
+  '<h2 class="films-list__title visually-hidden"></h2>';
 
 
 export default class NewFilterTitleView {
