@@ -7,7 +7,7 @@ import NewCardsFilmContainerView from '../view/cards-film-container-view.js';
 import NewPopuppView from '../view/popupp-details-view.js';
 import NewFilterTitleView from '../view/filter-title-view.js';
 
-const TASK_COUNT_PER_STEP = 5;
+const FILMS_COUNT_PER_STEP = 5;
 
 export default class ContentPresenter {
   #filmsMainContainer = new NewFilmsMainContainerView();
@@ -19,7 +19,7 @@ export default class ContentPresenter {
   #mainBody;
   #cardFilms;
   #loadMoreButtonComponent = null;
-  #arrayCopy = [];
+  #arrayFilmsCount = FILMS_COUNT_PER_STEP;
 
   constructor({filmContainer, filmInfoModel, mainBody,}) {
     this.#filmContainer = filmContainer;
@@ -29,20 +29,19 @@ export default class ContentPresenter {
 
   init() {
     this.#cardFilms = [...this.#filmInfoModel.cards];
-    this.#arrayCopy = this.#cardFilms.slice();
     this.#renderMainContainer();
   }
 
   //функция кнопки 'show more'
   #loadMoreButtonClickHandler = (evt) => {
     evt.preventDefault();
-    const pieceOfArray = this.#arrayCopy.splice(0, TASK_COUNT_PER_STEP);
+    this.#cardFilms
+      .slice(this.#arrayFilmsCount, this.#arrayFilmsCount + FILMS_COUNT_PER_STEP)
+      .forEach((card) => this.#renderCards(card));
 
-    for(let i = 0; i < pieceOfArray.length; i++) {
-      this.#renderCards(pieceOfArray[i]);
-    }
+    this.#arrayFilmsCount += FILMS_COUNT_PER_STEP;
 
-    if (this.#arrayCopy.length === 0) {
+    if (this.#arrayFilmsCount >= this.#cardFilms.length) {
       this.#mainContainersComponent.element.querySelector('.films-list__show-more')
         .classList.add('visually-hidden');
     }
@@ -50,23 +49,22 @@ export default class ContentPresenter {
 
   //отрисовка главного контайнера
   #renderMainContainer() {
-    const firtsFiveCard = this.#arrayCopy.splice(0, TASK_COUNT_PER_STEP);
 
     render(this.#filmsMainContainer, this.#filmContainer);
     render(this.#mainContainersComponent, this.#filmsMainContainer.element);
     render(this.#cardsContainer, this.#mainContainersComponent.element);
     render(this.#filterTitleView, this.#mainContainersComponent.element, RenderPosition.AFTERBEGIN);
 
-    if (firtsFiveCard.length === 0) {
+    if (this.#cardFilms.length === 0) {
       this.#filterTitleView.element.textContent = 'There are no movies in our database';
       this.#mainContainersComponent.element.querySelector('.films-list__title').classList.remove('visually-hidden');
     } else {
-      for ( let i = 0; i < firtsFiveCard.length; i++ ) {
-        this.#renderCards(firtsFiveCard[i]);
+      for ( let i = 0; i < Math.min(this.#cardFilms.length, FILMS_COUNT_PER_STEP); i++ ) {
+        this.#renderCards(this.#cardFilms[i]);
       }
     }
 
-    if (this.#arrayCopy.length > TASK_COUNT_PER_STEP) {
+    if (this.#cardFilms.length > FILMS_COUNT_PER_STEP) {
       this.#loadMoreButtonComponent = new NewShowMoreButtonView();
       render(this.#loadMoreButtonComponent, this.#mainContainersComponent.element);
       this.#loadMoreButtonComponent.element.addEventListener('click', this.#loadMoreButtonClickHandler);
