@@ -1,6 +1,6 @@
 import {createFilmInfo} from '../mock/render-mocks.js';
 
-const FILM_MINI_CARDS_COUNT = 5;
+const FILM_MINI_CARDS_COUNT = 24;
 
 
 export default class FilmInfoModel {
