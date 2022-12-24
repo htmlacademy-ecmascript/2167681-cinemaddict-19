@@ -1,4 +1,4 @@
-import {render, RenderPosition} from '../render.js';
+import {render, RenderPosition} from '../framework/render.js';
 import NewCardFilmView from '../view/card-film-view.js';
 import NewFilmsMainContainerView from '../view/films-main-container-view.js';
 import NewMainContainersComponentView from '../view/main-containers-component-view.js';

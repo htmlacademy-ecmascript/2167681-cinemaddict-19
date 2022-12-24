@@ -1,5 +1,4 @@
-import {createElement} from '../render.js';
-
+import AbstractView from '../framework/view/abstract-view.js';
 // сортировка по предпочтениям
 const createNewFiltersFilmTemplate = () =>
   `<ul class="sort">
@@ -8,22 +7,10 @@ const createNewFiltersFilmTemplate = () =>
     <li><a href="#" class="sort__button">Sort by rating</a></li>
   </ul>`;
 
-export default class NewFiltersFilmView {
-  #element;
+export default class NewFiltersFilmView extends AbstractView {
 
   get template() {
     return createNewFiltersFilmTemplate;
-  }
-
-  get element() {
-    if(!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
 

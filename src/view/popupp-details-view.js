@@ -1,5 +1,5 @@
-import {createElement} from '../render.js';
 import { humanizeTaskDueDate } from '../util.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 // попапп с подроным описанием фильма
 const createNewPopuppTemplate = (card) => {
@@ -121,26 +121,15 @@ const createNewPopuppTemplate = (card) => {
 </section>`
   );
 };
-export default class NewPopuppView {
-  #card;
-  #element;
+export default class NewPopuppView extends AbstractView {
+  #card = null;
 
   constructor ({card}) {
+    super();
     this.#card = card;
   }
 
   get template() {
     return createNewPopuppTemplate(this.#card);
-  }
-
-  get element() {
-    if(!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
