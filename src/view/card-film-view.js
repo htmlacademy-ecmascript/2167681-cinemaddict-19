@@ -29,7 +29,6 @@ const createNewCardFilmTemplate = (card) => {
 
 };
 
-
 export default class NewCardFilmView extends AbstractView {
   #card = null;
   #openPopup = null;
