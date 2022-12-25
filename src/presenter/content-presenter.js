@@ -111,7 +111,7 @@ export default class ContentPresenter {
     //закрытие поп аппа на ескейп
     function onEscKeyClosed (evt) {
       if(evt.key === 'Escape' || evt.key === 'Esc' ) {
-        closedPopupDetailsEsc.call(this);
+        closedPopupDetailsClick.call(this);
         document.removeEventListener('keydown', onEscKeyClosed);
       }
     }
