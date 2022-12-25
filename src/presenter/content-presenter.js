@@ -25,16 +25,17 @@ export default class ContentPresenter {
     this.#filmContainer = filmContainer;
     this.#filmInfoModel = filmInfoModel;
     this.#mainBody = mainBody;
+
   }
 
   init() {
     this.#cardFilms = [...this.#filmInfoModel.cards];
     this.#renderMainContainer();
+
   }
 
   //функция кнопки 'show more'
-  #loadMoreButtonClickHandler = (evt) => {
-    evt.preventDefault();
+  #loadMoreButtonClickHandler = () => {
     this.#cardFilms
       .slice(this.#arrayFilmsCount, this.#arrayFilmsCount + FILMS_COUNT_PER_STEP)
       .forEach((card) => this.#renderCards(card));
@@ -65,53 +66,58 @@ export default class ContentPresenter {
     }
 
     if (this.#cardFilms.length > FILMS_COUNT_PER_STEP) {
-      this.#loadMoreButtonComponent = new NewShowMoreButtonView();
+      this.#loadMoreButtonComponent = new NewShowMoreButtonView({
+        onBtnClick: this.#loadMoreButtonClickHandler
+      });
       render(this.#loadMoreButtonComponent, this.#mainContainersComponent.element);
-      this.#loadMoreButtonComponent.element.addEventListener('click', this.#loadMoreButtonClickHandler);
     }
 
   }
 
   // функция отрисовки карточек
   #renderCards(card) {
-    const filmCardComponent = new NewCardFilmView({card});
-    const popupComponent = new NewPopuppView({card});
+    const filmCardComponent = new NewCardFilmView({card,
+      onClick: () => {
+        openPopupDetails.call(this);
+        document.addEventListener('keydown', onEscKeyClosed);
+      }
+    });
+    const popupComponent = new NewPopuppView({card,
+      onBtnClick: () => {
+        closedPopupDetailsClick.call(this);
+        document.removeEventListener('keydown', onEscKeyClosed);
+      }
+    });
 
 
     // функция открытия попапа "подробности фильма"
-    const openPopupDetails = () => {
+    function openPopupDetails () {
       this.#mainBody.classList.add('hide-overflow');
       render (popupComponent, this.#mainBody);
-    };
-    // функция закрытие попапа "подробности фильма"
-    const closedPopupDetails = () => {
+    }
+    // закрытие попаппа на клик
+    function closedPopupDetailsClick () {
       this.#mainBody.classList.remove('hide-overflow');
       this.#mainBody.removeChild(popupComponent.element);
-    };
+    }
+
+    // функция закрытие попапа "подробности фильма" для esc
+    function closedPopupDetailsEsc () {
+      this.body.classList.remove('hide-overflow');
+      this.body.removeChild(popupComponent.element);
+    }
+
+
     //закрытие поп аппа на ескейп
-    const onEscKeyClosed = (evt) => {
+    function onEscKeyClosed (evt) {
       if(evt.key === 'Escape' || evt.key === 'Esc' ) {
-        evt.preventDefault();
-        closedPopupDetails();
+        closedPopupDetailsEsc.call(this);
         document.removeEventListener('keydown', onEscKeyClosed);
       }
-    };
+    }
 
 
     render(filmCardComponent, this.#cardsContainer.element);
-
-
-    // обработчик открытие попапа "подробности фильма"
-    filmCardComponent.element.querySelector('img').addEventListener('click', () => {
-      openPopupDetails();
-      document.addEventListener('keydown', onEscKeyClosed);
-
-    });
-    // обработчик закрытие попапа "подробности фильма"
-    popupComponent.element.querySelector('.film-details__close-btn').addEventListener('click', () => {
-      closedPopupDetails();
-      document.removeEventListener('keydown', onEscKeyClosed);
-    });
 
   }
 

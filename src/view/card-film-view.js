@@ -32,15 +32,23 @@ const createNewCardFilmTemplate = (card) => {
 
 export default class NewCardFilmView extends AbstractView {
   #card = null;
+  #openPopup = null;
 
-
-  constructor({card}) {
+  constructor({card, onClick}) {
     super();
     this.#card = card;
+    this.#openPopup = onClick;
+
+    this.element.querySelector('img').addEventListener('click', this.#openPopupHendler);
   }
 
 
   get template() {
     return createNewCardFilmTemplate(this.#card);
   }
+
+  #openPopupHendler = (evt) => {
+    evt.preventDefault();
+    this.#openPopup();
+  };
 }

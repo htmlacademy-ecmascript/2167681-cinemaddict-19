@@ -5,8 +5,22 @@ const createNewShowMoreButtonTemplate = () =>
 
 
 export default class NewShowMoreButtonView extends AbstractView {
+  #clickShowMore;
+
+  constructor ({onBtnClick}) {
+    super();
+    this.#clickShowMore = onBtnClick;
+
+    this.element.addEventListener('click', this.#showMoreClickHendler);
+  }
 
   get template() {
     return createNewShowMoreButtonTemplate;
   }
+
+
+  #showMoreClickHendler = (evt) => {
+    evt.preventDefault();
+    this.#clickShowMore();
+  };
 }
