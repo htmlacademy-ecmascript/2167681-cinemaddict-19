@@ -1,7 +1,7 @@
 import {createElement} from '../render.js';
 
 //главный контейнер с контентом сайта
-const createNewFilmsMainContainerTemplate = () => '<section class="films"></section>';
+const createNewFilmsMainContainerTemplate = () => '<section class="films">ddd</section>';
 
 export default class NewFilmsMainContainerView {
   #element;
