@@ -101,7 +101,7 @@ export default class ContentPresenter {
       this.#mainBody.removeChild(popupComponent.element);
     }
 
-    // функция закрытие попапа "подробности фильма" для esc
+    // функция закрытие попапа "подробности фильма" для esc (пришлось добавить так как closedPopupDetailsClick не работает в теле onEscKeyClosed)
     function closedPopupDetailsEsc () {
       this.body.classList.remove('hide-overflow');
       this.body.removeChild(popupComponent.element);
