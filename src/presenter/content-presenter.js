@@ -81,13 +81,13 @@ export default class ContentPresenter {
     this.#filmCardComponent = new NewCardFilmView({card,
       onClick: () => {
         this.#openPopupDetails.call(this);
-        document.addEventListener('keydown', onEscKeyClosed);
+        document.addEventListener('keydown', this.#onEscKeyClosed);
       }
     });
     this.#popupComponent = new NewPopuppView({card,
       onBtnClick: () => {
         this.#closedPopupDetailsClick.call(this);
-        document.removeEventListener('keydown', onEscKeyClosed);
+        document.removeEventListener('keydown', this.#onEscKeyClosed);
       }
     });
 
@@ -103,17 +103,16 @@ export default class ContentPresenter {
     }
  */
 
-    //закрытие поп аппа на ескейп
-    function onEscKeyClosed (evt) {
-      if(evt.key === 'Escape' || evt.key === 'Esc' ) {
-        this.#closedPopupDetailsClick.call(this);
-        document.removeEventListener('keydown', onEscKeyClosed);
-      }
-    }
-
-
     render(this.#filmCardComponent, this.#cardsContainer.element);
 
+  }
+  //закрытие поп аппа на ескейп
+
+  #onEscKeyClosed (evt) {
+    if(evt.key === 'Escape' || evt.key === 'Esc' ) {
+      this.#closedPopupDetailsClick.call(this);
+      document.removeEventListener('keydown', this.#onEscKeyClosed);
+    }
   }
 
   #openPopupDetails () {
