@@ -16,10 +16,12 @@ export default class ContentPresenter {
   #filterTitleView = new NewFilterTitleView();
   #filmContainer;
   #filmInfoModel;
-  #mainBody;
+  #mainBody = null;
   #cardFilms;
   #loadMoreButtonComponent = null;
   #arrayFilmsCount = FILMS_COUNT_PER_STEP;
+  #filmCardComponent;
+  #popupComponent;
 
   constructor({filmContainer, filmInfoModel, mainBody,}) {
     this.#filmContainer = filmContainer;
@@ -76,30 +78,23 @@ export default class ContentPresenter {
 
   // функция отрисовки карточек
   #renderCards(card) {
-    const filmCardComponent = new NewCardFilmView({card,
+    this.#filmCardComponent = new NewCardFilmView({card,
       onClick: () => {
-        openPopupDetails.call(this);
+        this.#openPopupDetails.call(this);
         document.addEventListener('keydown', onEscKeyClosed);
       }
     });
-    const popupComponent = new NewPopuppView({card,
+    this.#popupComponent = new NewPopuppView({card,
       onBtnClick: () => {
-        closedPopupDetailsClick.call(this);
+        this.#closedPopupDetailsClick.call(this);
         document.removeEventListener('keydown', onEscKeyClosed);
       }
     });
 
 
     // функция открытия попапа "подробности фильма"
-    function openPopupDetails () {
-      this.#mainBody.classList.add('hide-overflow');
-      render (popupComponent, this.#mainBody);
-    }
+
     // закрытие попаппа на клик
-    function closedPopupDetailsClick () {
-      this.#mainBody.classList.remove('hide-overflow');
-      this.#mainBody.removeChild(popupComponent.element);
-    }
 
     // функция закрытие попапа "подробности фильма" для esc (пришлось добавить так как closedPopupDetailsClick не работает в теле onEscKeyClosed)
     /*  function closedPopupDetailsEsc () {
@@ -111,16 +106,25 @@ export default class ContentPresenter {
     //закрытие поп аппа на ескейп
     function onEscKeyClosed (evt) {
       if(evt.key === 'Escape' || evt.key === 'Esc' ) {
-        closedPopupDetailsClick.call(this);
+        this.#closedPopupDetailsClick.call(this);
         document.removeEventListener('keydown', onEscKeyClosed);
       }
     }
 
 
-    render(filmCardComponent, this.#cardsContainer.element);
+    render(this.#filmCardComponent, this.#cardsContainer.element);
 
   }
 
+  #openPopupDetails () {
+    render (this.#popupComponent, this.#mainBody);
+    this.#mainBody.classList.add('hide-overflow');
+  }
+
+  #closedPopupDetailsClick () {
+    this.#mainBody.classList.remove('hide-overflow');
+    this.#mainBody.removeChild(this.#popupComponent.element);
+  }
 }
 
 
