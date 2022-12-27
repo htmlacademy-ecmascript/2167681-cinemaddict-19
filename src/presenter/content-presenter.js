@@ -97,18 +97,18 @@ export default class ContentPresenter {
     });
     render(this.#popupComponent, this.#mainBody);
     this.#mainBody.classList.add('hide-overflow');
-    document.addEventListener('keydown', this.#onEscKeyClosed);
+    document.addEventListener('keydown', this.onEscKeyClosed);
 
   }
   //закрытие поп аппа на ескейп
 
-  #onEscKeyClosed (evt) {
+  onEscKeyClosed = (evt) => {
     if(evt.key === 'Escape' || evt.key === 'Esc' ) {
       evt.preventDefault();
       this.#closedPopupDetailsClick();
-      document.removeEventListener('keydown', this.#onEscKeyClosed);
+      document.removeEventListener('keydown', this.onEscKeyClosed);
     }
-  }
+  };
 
 
   #closedPopupDetailsClick () {
