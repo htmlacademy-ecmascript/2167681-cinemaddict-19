@@ -80,45 +80,36 @@ export default class ContentPresenter {
   #renderCards(card) {
     this.#filmCardComponent = new NewCardFilmView({card,
       onClick: () => {
-        this.#openPopupDetails.call(this);
-        document.addEventListener('keydown', this.#onEscKeyClosed);
+        this.#renderPopup(card);
       }
     });
-    this.#popupComponent = new NewPopuppView({card,
-      onBtnClick: () => {
-        this.#closedPopupDetailsClick.call(this);
-        document.removeEventListener('keydown', this.#onEscKeyClosed);
-      }
-    });
-
-
-    // функция открытия попапа "подробности фильма"
-
-    // закрытие попаппа на клик
-
-    // функция закрытие попапа "подробности фильма" для esc (пришлось добавить так как closedPopupDetailsClick не работает в теле onEscKeyClosed)
-    /*  function closedPopupDetailsEsc () {
-      this.body.classList.remove('hide-overflow');
-      this.body.removeChild(popupComponent.element);
-    }
- */
 
     render(this.#filmCardComponent, this.#cardsContainer.element);
+
+  }
+
+  // функция отрисовки попапа
+  #renderPopup(card) {
+    this.#popupComponent = new NewPopuppView({card,
+      onBtnClick: () => {
+        this.#closedPopupDetailsClick();
+      }
+    });
+    render(this.#popupComponent, this.#mainBody);
+    this.#mainBody.classList.add('hide-overflow');
+    document.addEventListener('keydown', this.#onEscKeyClosed);
 
   }
   //закрытие поп аппа на ескейп
 
   #onEscKeyClosed (evt) {
     if(evt.key === 'Escape' || evt.key === 'Esc' ) {
-      this.#closedPopupDetailsClick.call(this);
+      evt.preventDefault();
+      this.#closedPopupDetailsClick();
       document.removeEventListener('keydown', this.#onEscKeyClosed);
     }
   }
 
-  #openPopupDetails () {
-    render (this.#popupComponent, this.#mainBody);
-    this.#mainBody.classList.add('hide-overflow');
-  }
 
   #closedPopupDetailsClick () {
     this.#mainBody.classList.remove('hide-overflow');
