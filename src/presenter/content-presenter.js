@@ -81,7 +81,6 @@ export default class ContentPresenter {
     this.#filmCardComponent = new NewCardFilmView({card,
       onClick: () => {
         this.#renderPopup(card);
-        document.removeEventListener('keydown', this.onEscKeyClosed);
       }
     });
 
@@ -115,5 +114,6 @@ export default class ContentPresenter {
   #closedPopupDetailsClick () {
     this.#mainBody.classList.remove('hide-overflow');
     this.#mainBody.removeChild(this.#popupComponent.element);
+    document.removeEventListener('keydown', this.onEscKeyClosed);
   }
 }
