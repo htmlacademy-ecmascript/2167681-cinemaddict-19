@@ -116,8 +116,3 @@ export default class ContentPresenter {
     this.#mainBody.removeChild(this.#popupComponent.element);
   }
 }
-
-
-export {
-  ContentPresenter,
-};
