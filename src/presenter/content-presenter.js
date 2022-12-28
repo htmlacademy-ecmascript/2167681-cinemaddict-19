@@ -81,6 +81,7 @@ export default class ContentPresenter {
     this.#filmCardComponent = new NewCardFilmView({card,
       onClick: () => {
         this.#renderPopup(card);
+        document.removeEventListener('keydown', this.onEscKeyClosed);
       }
     });
 
