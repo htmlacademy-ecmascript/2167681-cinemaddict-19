@@ -1,5 +1,5 @@
-import {createElement} from '../render.js';
 import { humanizeTaskDueDate } from '../util.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 // попапп с подроным описанием фильма
 const createNewPopuppTemplate = (card) => {
@@ -121,26 +121,24 @@ const createNewPopuppTemplate = (card) => {
 </section>`
   );
 };
-export default class NewPopuppView {
-  #card;
-  #element;
+export default class NewPopuppView extends AbstractView {
+  #card = null;
+  #btnClosedClick = null;
 
-  constructor ({card}) {
+  constructor ({card, onBtnClick}) {
+    super();
     this.#card = card;
+    this.#btnClosedClick = onBtnClick;
+
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#btnClosedClickHendler);
   }
 
   get template() {
     return createNewPopuppTemplate(this.#card);
   }
 
-  get element() {
-    if(!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #btnClosedClickHendler = (evt) => {
+    evt.preventDefault();
+    this.#btnClosedClick();
+  };
 }

@@ -1,4 +1,5 @@
-import {createElement} from '../render.js';
+
+import AbstractView from '../framework/view/abstract-view.js';
 
 // контейнер для карточек с фильмом (вкладывается в main-containers-componets-view.js )
 const createNewCardsFilmContainerTemplate = () =>
@@ -6,21 +7,10 @@ const createNewCardsFilmContainerTemplate = () =>
    </div>`;
 
 
-export default class NewCardsFilmContainerView {
-  #element;
+export default class NewCardsFilmContainerView extends AbstractView {
 
   get template() {
     return createNewCardsFilmContainerTemplate;
   }
 
-  get element() {
-    if(!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
 }

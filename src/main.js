@@ -1,5 +1,5 @@
 import NewUserRangView from './view/user-rang-view.js';
-import {render, RenderPosition} from './render.js';
+import {render, RenderPosition} from './framework/render.js';
 import NewNavFilmView from './view/nav-films-view.js';
 import NewFiltersFilmView from './view/filters-view.js';
 import ContentPresenter from './presenter/content-presenter.js';

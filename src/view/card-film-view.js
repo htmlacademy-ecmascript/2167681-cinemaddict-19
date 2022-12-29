@@ -1,6 +1,5 @@
-import {createElement} from '../render.js';
 import { humanizeTaskDueDate } from '../util.js';
-
+import AbstractView from '../framework/view/abstract-view.js';
 
 // карточка с фильмом
 const createNewCardFilmTemplate = (card) => {
@@ -30,14 +29,16 @@ const createNewCardFilmTemplate = (card) => {
 
 };
 
+export default class NewCardFilmView extends AbstractView {
+  #card = null;
+  #openPopup = null;
 
-export default class NewCardFilmView {
-  #card;
-  #element;
-
-
-  constructor({card}) {
+  constructor({card, onClick}) {
+    super();
     this.#card = card;
+    this.#openPopup = onClick;
+
+    this.element.querySelector('img').addEventListener('click', this.#openPopupHendler);
   }
 
 
@@ -45,14 +46,8 @@ export default class NewCardFilmView {
     return createNewCardFilmTemplate(this.#card);
   }
 
-  get element() {
-    if(!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #openPopupHendler = (evt) => {
+    evt.preventDefault();
+    this.#openPopup();
+  };
 }

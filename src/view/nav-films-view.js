@@ -1,5 +1,4 @@
-import {createElement} from '../render.js';
-
+import AbstractView from '../framework/view/abstract-view.js';
 // навигация
 const createNewNavFilmTemplate = () =>
   `<nav class="main-navigation">
@@ -9,21 +8,9 @@ const createNewNavFilmTemplate = () =>
     <a href="#favorites" class="main-navigation__item">Favorites <span class="main-navigation__item-count">8</span></a>
   </nav>`;
 
-export default class NewNavFilmView {
-  #element;
+export default class NewNavFilmView extends AbstractView {
 
   get template() {
     return createNewNavFilmTemplate;
-  }
-
-  get element() {
-    if(!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
