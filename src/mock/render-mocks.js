@@ -1,7 +1,7 @@
 import {NAMES, TOTAL_RAITING, POSTER, COUNTRY, AGE_RATING, GENRE,
   FILM_NAME, DESCRIPTIONS, BUTTON_STATUS, DATE, DURATION, EMOTION, } from './mocks-data.js';
 import {getRandomIntInclusiveNotFloor, getRandomIntInclusiveArrayElement,
-  getRandomIntInclusive, getDate, nowDate, getRandomUniqInt} from '../util.js';
+  getRandomIntInclusive, getDate, nowDate, getRandomUniqInt} from '../utils/common.js';
 
 //ID для фильмов
 const createFilmId = getRandomUniqInt(1,30);
@@ -44,7 +44,6 @@ const createFilmInfo = () => ({
     favorite: getRandomIntInclusiveArrayElement(BUTTON_STATUS),
   }
 });
-
 //структура комментария
 const createComment = () => ({
   id: createCommentId(),

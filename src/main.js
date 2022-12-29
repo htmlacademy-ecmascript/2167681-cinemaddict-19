@@ -4,6 +4,8 @@ import NewNavFilmView from './view/nav-films-view.js';
 import NewFiltersFilmView from './view/filters-view.js';
 import ContentPresenter from './presenter/content-presenter.js';
 import FilmInfoModel from './model/film-info-model.js';
+import { generateFilter } from './mock/filters-mock.js';
+
 
 const siteHeaderElement = document.querySelector('.header');
 const siteMainElement = document.querySelector('.main');
@@ -11,6 +13,9 @@ const siteMainElement = document.querySelector('.main');
 const body = document.querySelector('body');
 
 const filmInfoModel = new FilmInfoModel();
+
+const filters = generateFilter(filmInfoModel.cards);
+
 const contentPresenter = new ContentPresenter({
   filmContainer:siteMainElement,
   filmInfoModel,
@@ -20,7 +25,7 @@ const contentPresenter = new ContentPresenter({
 
 render(new NewUserRangView(), siteHeaderElement);
 render(new NewFiltersFilmView(), siteMainElement);
-render(new NewNavFilmView(), siteMainElement, RenderPosition.AFTERBEGIN);
+render(new NewNavFilmView({filters}), siteMainElement, RenderPosition.AFTERBEGIN);
 
 contentPresenter.init();
 
