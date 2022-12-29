@@ -36,6 +36,11 @@ export default class ContentPresenter {
 
   }
 
+  //сортировка
+  #sortFilms () {
+
+  }
+
   //функция кнопки 'show more'
   #loadMoreButtonClickHandler = () => {
     this.#cardFilms
@@ -92,7 +97,7 @@ export default class ContentPresenter {
   #renderPopup(card) {
     this.#popupComponent = new NewPopuppView({card,
       onBtnClick: () => {
-        this.#closedPopupDetailsClick();
+        this.#onClickClosedPopupDetails();
       }
     });
     render(this.#popupComponent, this.#mainBody);
@@ -105,13 +110,13 @@ export default class ContentPresenter {
   onEscKeyClosed = (evt) => {
     if(evt.key === 'Escape' || evt.key === 'Esc' ) {
       evt.preventDefault();
-      this.#closedPopupDetailsClick();
+      this.#onClickClosedPopupDetails();
       document.removeEventListener('keydown', this.onEscKeyClosed);
     }
   };
 
 
-  #closedPopupDetailsClick () {
+  #onClickClosedPopupDetails () {
     this.#mainBody.classList.remove('hide-overflow');
     this.#mainBody.removeChild(this.#popupComponent.element);
     document.removeEventListener('keydown', this.onEscKeyClosed);

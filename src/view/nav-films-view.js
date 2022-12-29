@@ -1,16 +1,35 @@
 import AbstractView from '../framework/view/abstract-view.js';
 // навигация
-const createNewNavFilmTemplate = () =>
-  `<nav class="main-navigation">
-    <a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>
-    <a href="#watchlist" class="main-navigation__item">Watchlist <span class="main-navigation__item-count">13</span></a>
-    <a href="#history" class="main-navigation__item">History <span class="main-navigation__item-count">4</span></a>
-    <a href="#favorites" class="main-navigation__item">Favorites <span class="main-navigation__item-count">8</span></a>
-  </nav>`;
+
+const createNavItemTemplate = (filter) => {
+  const {name, count} = filter;
+
+  return (`<a href="#watchlist" class="main-navigation__item">${name}
+   <span class="main-navigation__item-count">${count}</span></a>`);
+};
+
+
+const createNewNavFilmTemplate = (navItems) => {
+  const navItemsTemplate = navItems
+    .map((filter) => createNavItemTemplate(filter)).join('');
+
+  return(
+    `<nav class="main-navigation">
+	 <a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>
+	 ${navItemsTemplate}
+   </nav>`);
+};
+
 
 export default class NewNavFilmView extends AbstractView {
+  #filtersNav = null;
+
+  constructor ({filters}) {
+    super();
+    this.#filtersNav = filters;
+  }
 
   get template() {
-    return createNewNavFilmTemplate;
+    return createNewNavFilmTemplate(this.#filtersNav);
   }
 }

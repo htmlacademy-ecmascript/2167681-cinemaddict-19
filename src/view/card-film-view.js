@@ -1,4 +1,4 @@
-import { humanizeTaskDueDate } from '../util.js';
+import { humanizeTaskDueDate } from '../utils/common.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
 // карточка с фильмом
