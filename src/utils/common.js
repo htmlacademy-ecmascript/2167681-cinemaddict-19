@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-
+import { BUTTON_STATUS } from '../mock/mocks-data.js';
 
 const DATE_FORMAT = 'D MMMM YYYY';
 
@@ -49,6 +49,18 @@ function getRandomUniqInt (min, max) {
 }
 
 
+const changeStatus = (hohoho) => hohoho !== BUTTON_STATUS[1] ? BUTTON_STATUS[1] : BUTTON_STATUS[0];
+
+/* return buttonData === BUTTON_STATUS[0] ? ( BUTTON_STATUS[1]) :
+   (BUTTON_STATUS[1]); */
+
+
+//( buttonData = BUTTON_STATUS[1])
+
+// функция для смены данных
+
+const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
+
 export {
   getRandomIntInclusive,
   getRandomIntInclusiveNotFloor,
@@ -57,4 +69,6 @@ export {
   nowDate,
   getRandomUniqInt,
   humanizeTaskDueDate,
+  updateItem,
+  changeStatus
 };

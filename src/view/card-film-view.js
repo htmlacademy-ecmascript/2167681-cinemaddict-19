@@ -1,6 +1,7 @@
 import { humanizeTaskDueDate } from '../utils/common.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
+
 // карточка с фильмом
 const createNewCardFilmTemplate = (card) => {
   const { comments, filmInfo, userDetails} = card;
@@ -32,12 +33,23 @@ const createNewCardFilmTemplate = (card) => {
 export default class NewCardFilmView extends AbstractView {
   #card = null;
   #openPopup = null;
+  #hoho = null;
+  #z = '--inactive';
 
-  constructor({card, onClick}) {
+  constructor({card, onClick, haha, changeChange}) {
     super();
     this.#card = card;
     this.#openPopup = onClick;
+    this.#hoho = haha;
+    //ФУНКЦИЯ ИЗМЕНЕНИЯ ДАННЫХ ПО КЛИКУ
+    this.changeChange = changeChange;
 
+
+    this.element.querySelector('.film-card__controls-item--add-to-watchlist')
+      .addEventListener('click',(evt) => {
+        evt.preventDefault();
+        this.changeChange(this.#card.userDetails.watchlist);
+      });
     this.element.querySelector('img').addEventListener('click', this.#openPopupHendler);
   }
 
@@ -50,4 +62,6 @@ export default class NewCardFilmView extends AbstractView {
     evt.preventDefault();
     this.#openPopup();
   };
+
+
 }

@@ -124,13 +124,15 @@ const createNewPopuppTemplate = (card) => {
 export default class NewPopuppView extends AbstractView {
   #card = null;
   #btnClosedClick = null;
+  #onOn = null;
 
-  constructor ({card, onBtnClick}) {
+  constructor ({card, onBtnClick, onOn}) {
     super();
     this.#card = card;
     this.#btnClosedClick = onBtnClick;
+    this.#onOn = onOn;
 
-    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#btnClosedClickHendler);
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#btnClosedClickHendler );
   }
 
   get template() {
@@ -141,4 +143,6 @@ export default class NewPopuppView extends AbstractView {
     evt.preventDefault();
     this.#btnClosedClick();
   };
+
+
 }
