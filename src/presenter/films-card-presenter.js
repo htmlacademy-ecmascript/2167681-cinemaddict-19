@@ -2,7 +2,6 @@ import NewCardFilmView from '../view/card-film-view.js';
 //import NewPopuppView from '../view/popupp-details-view.js';
 import {remove, render, replace} from '../framework/render.js';
 import NewShowMoreButtonView from '../view/show-more-button-view.js';
-import { BUTTON_STATUS } from '../mock/mocks-data.js';
 
 export default class FilmsCardPresenter {
   #cardsContainer = null;
@@ -39,8 +38,9 @@ export default class FilmsCardPresenter {
 
         this.#renderPopup(this.#cardsModels);
       },
-      haha: this.hahaha,
-      changeChange: this.changeChange,
+      changeWatchlist: this.changeWatchlist,
+      changeFavorite: this.changeFavorite,
+      changeAlredyWatched: this.changeAlredyWatched,
 
     });
 
@@ -70,15 +70,25 @@ export default class FilmsCardPresenter {
   }
 
   // ДАННАЯ ФУНКЦИЯ ИЗМЕНЯЕТ СТАТУС КНОПКИ (ОРИГИНАЛ ЭТОЙ ФУНКЦИИ НАХОДИТЬСЯ В UTILS/COMMON.JS)
-  hahaha = (hohoho) => hohoho !== BUTTON_STATUS[1] ? BUTTON_STATUS[1] : BUTTON_STATUS[0];
 
 
   /* ФУНКЦИЯ ДЛЯ ИЗМЕНЕНИЯ ДАННЫХ В МОДЕЛЯХ - ОНА ПЕРЕДАЕТСЯ В VIEW/CARD-FILM-VIEW
   ИМПОРТИРУЕТСЯ ИЗ CONTENT-PReSENTER
   ПРОБЛЕМА КАК РАЗ ВО ВЛОЖЕННОСТИ ДАННОЙ СТРУКТУРЫ. НЕ ПОЛУЧАЕТСЯ ТОЧЕЧНО ИЗМЕНИТЬ ДАННЫЕ
   В ЭТОМ ВАРИАНТЕ УМЕНЯ ОСТАЕТСЯ ЛИШЬ КУСОК ОТ МОДЕЛЬКИ - userDetails */
-  changeChange = (data) => {
-    this.#onFilmChange({...this.#cardsModels.userDetails, watchlist : this.hahaha(data)});
+  changeWatchlist = (data) => {
+    this.#onFilmChange({...this.#cardsModels,userDetails:{...this.#cardsModels.userDetails, watchlist: !data}});
+
+  };
+
+  changeFavorite = (data) => {
+    this.#onFilmChange({...this.#cardsModels,userDetails:{...this.#cardsModels.userDetails, favorite: !data}});
+
+  };
+
+
+  changeAlredyWatched = (data) => {
+    this.#onFilmChange({...this.#cardsModels,userDetails:{...this.#cardsModels.userDetails, alreadyWatched: !data}});
 
   };
 

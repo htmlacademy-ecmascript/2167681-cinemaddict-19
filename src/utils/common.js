@@ -51,11 +51,6 @@ function getRandomUniqInt (min, max) {
 
 const changeStatus = (hohoho) => hohoho !== BUTTON_STATUS[1] ? BUTTON_STATUS[1] : BUTTON_STATUS[0];
 
-/* return buttonData === BUTTON_STATUS[0] ? ( BUTTON_STATUS[1]) :
-   (BUTTON_STATUS[1]); */
-
-
-//( buttonData = BUTTON_STATUS[1])
 
 // функция для смены данных
 

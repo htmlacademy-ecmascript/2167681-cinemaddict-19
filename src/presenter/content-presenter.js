@@ -121,7 +121,7 @@ export default class ContentPresenter {
 
   #handleFilmChange = (updateFilm) => {
     this.#cardFilms = updateItem(this.#cardFilms, updateFilm);
-    //this.#filmCardPresenters.get(updateFilm.id).init(updateFilm);
+    this.#filmCardPresenters.get(updateFilm.id).init(updateFilm);
     //console.log(this.#filmCardPresenters.get(updateFilm.id));
   };
 

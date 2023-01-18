@@ -1,6 +1,9 @@
 import { humanizeTaskDueDate } from '../utils/common.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
+const ACTIVATE_BUTTON = ['--active', '--inactive' ];
+
+const activateButton	= (buttonData) => buttonData ? ACTIVATE_BUTTON[0] : ACTIVATE_BUTTON[1];
 
 // карточка с фильмом
 const createNewCardFilmTemplate = (card) => {
@@ -21,9 +24,9 @@ const createNewCardFilmTemplate = (card) => {
 	  <span class="film-card__comments">${comments.length} comments</span>
 	</a>
 	<div class="film-card__controls">
-	  <button class="film-card__controls-item film-card__controls-item--add-to-watchlist film-card__controls-item${userDetails.watchlist}" type="button">Add to watchlist</button>
-	  <button class="film-card__controls-item film-card__controls-item--mark-as-watched film-card__controls-item${userDetails.alreadyWatched}" type="button">Mark as watched</button>
-	  <button class="film-card__controls-item film-card__controls-item--favorite film-card__controls-item${userDetails.favorite}" type="button">Mark as favorite</button>
+	  <button class="film-card__controls-item film-card__controls-item--add-to-watchlist film-card__controls-item${activateButton(userDetails.watchlist)}" type="button">Add to watchlist</button>
+	  <button class="film-card__controls-item film-card__controls-item--mark-as-watched film-card__controls-item${activateButton(userDetails.alreadyWatched)}" type="button">Mark as watched</button>
+	  <button class="film-card__controls-item film-card__controls-item--favorite film-card__controls-item${activateButton(userDetails.favorite)}" type="button">Mark as favorite</button>
 	</div>
  </article>`
   );
@@ -33,23 +36,36 @@ const createNewCardFilmTemplate = (card) => {
 export default class NewCardFilmView extends AbstractView {
   #card = null;
   #openPopup = null;
-  #hoho = null;
-  #z = '--inactive';
+  #changeWatchlist = null;
+  #changeFavorite = null;
+  #changeAlreadyWatched = null;
 
-  constructor({card, onClick, haha, changeChange}) {
+  constructor({card, onClick, changeWatchlist, changeFavorite, changeAlredyWatched}) {
     super();
     this.#card = card;
     this.#openPopup = onClick;
-    this.#hoho = haha;
     //ФУНКЦИЯ ИЗМЕНЕНИЯ ДАННЫХ ПО КЛИКУ
-    this.changeChange = changeChange;
+    this.#changeWatchlist = changeWatchlist;
+    this.#changeFavorite = changeFavorite;
+    this.#changeAlreadyWatched = changeAlredyWatched;
 
 
-    this.element.querySelector('.film-card__controls-item--add-to-watchlist')
+    /*  this.element.querySelector('.film-card__controls-item--add-to-watchlist')
       .addEventListener('click',(evt) => {
+        console.log(this.#card);
         evt.preventDefault();
-        this.changeChange(this.#card.userDetails.watchlist);
-      });
+        this.#changeWatchlist(this.#card.userDetails.watchlist);
+      }); */
+
+    this.element.querySelector('.film-card__controls').addEventListener('click', (evt) => {
+      if (evt.target.closest('.film-card__controls-item')) {
+        this.#changeDataClickHendler(evt);
+
+      }
+
+    });
+
+
     this.element.querySelector('img').addEventListener('click', this.#openPopupHendler);
   }
 
@@ -63,5 +79,19 @@ export default class NewCardFilmView extends AbstractView {
     this.#openPopup();
   };
 
+  #changeDataClickHendler = (evt) => {
+    evt.preventDefault();
+    switch (evt.target.textContent) {
+      case 'Mark as watched' :
+        this.#changeAlreadyWatched(this.#card.userDetails.alreadyWatched);
+        break;
+      case 'Mark as favorite' :
+        this.#changeFavorite(this.#card.userDetails.favorite);
+        break;
+      case 'Add to watchlist' :
+        this.#changeWatchlist(this.#card.userDetails.watchlist);
+        break;
+    }
+  };
 
 }

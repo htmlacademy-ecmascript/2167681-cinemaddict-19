@@ -1,6 +1,10 @@
 import { humanizeTaskDueDate } from '../utils/common.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
+const ACTIVATE_BUTTON = ['--active', '--inactive' ];
+
+const activateButton	= (buttonData) => buttonData ? ACTIVATE_BUTTON[0] : ACTIVATE_BUTTON[1];
+
 // попапп с подроным описанием фильма
 const createNewPopuppTemplate = (card) => {
   const { filmInfo, userDetails} = card;
@@ -72,9 +76,9 @@ const createNewPopuppTemplate = (card) => {
 	 </div>
 
 	 <section class="film-details__controls">
-		<button type="button" class="film-details__control-button film-details__control-button${userDetails.watchlist} film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
-		<button type="button" class="film-details__control-button film-details__control-button${userDetails.alreadyWatched}" id="watched" name="watched">Already watched</button>
-		<button type="button" class="film-details__control-button film-details__control-button${userDetails.favorite}" id="favorite" name="favorite">Add to favorites</button>
+		<button type="button" class="film-details__control-button film-details__control-button${activateButton(userDetails.watchlist)} film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
+		<button type="button" class="film-details__control-button film-details__control-button${activateButton(userDetails.alreadyWatched)}" id="watched" name="watched">Already watched</button>
+		<button type="button" class="film-details__control-button film-details__control-button${activateButton(userDetails.favorite)}" id="favorite" name="favorite">Add to favorites</button>
 	 </section>
   </div>
 
