@@ -138,6 +138,9 @@ export default class ContentPresenter {
     this.#filmCardPresenters.set(cards.id, this.#filmCardPresenter);
   }
 
+  /* ПРОБЛЕМА В ЭТОЙ ФУНКЦИИ. ПОЧЕМУ ТО НА ПЕРВЫЙ РАЗ ОНА СРАБАТЫВАЕТ НОРМАЛЬНО, НО КОГДА Я ПЕРЕВЫЗЫВАЮ ПОПАПП ИЛИ ПОСЛЕ ЕГО
+  ЗАКРЫТИЯ КЛИКАЮ ПО МИНИАТЮРЕ ТО ВСЕ ЛОМАЕТСЯ */
+
   #handleFilmChange = (updateFilm) => {
     this.#cardFilms = updateItem(this.#cardFilms, updateFilm);
     this.#filmCardPresenters.get(updateFilm.id).init(updateFilm);
