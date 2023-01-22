@@ -18,11 +18,12 @@ export default class ContentPresenter {
   #filmInfoModel;
   #mainBody = null;
   #cardFilms = [];
-  #loadMoreButtonComponent = null;
   #arrayFilmsCount = FILMS_COUNT_PER_STEP;
   #filmCardPresenter = null;
   #filmsPopupPresenter = null;
   #filmCardPresenters = new Map();
+  #popupPresenterMap = new Map();
+
 
   constructor({filmContainer, filmInfoModel, mainBody,}) {
     this.#filmContainer = filmContainer;
@@ -34,26 +35,44 @@ export default class ContentPresenter {
     this.#cardFilms = [...this.#filmInfoModel.cards];
     this.#renderMainContainer();
 
-
   }
 
 
   #connectFilmsPopupPresenter = (card) => {
+    if(this.#filmsPopupPresenter) {
+      this.#filmsPopupPresenter.destroy();
+      //this.#filmsPopupPresenter = null;
+    }
 
     this.#filmsPopupPresenter = new FilmsPopupPresenter({
-      mainBody: this.#mainBody
+      mainBody: this.#mainBody,
+      changeWatchlist: this.#changeWatchlist,
+      changeFavorite: this.#changeFavorite,
+      changeAlredyWatched: this.#changeAlredyWatched,
     });
     this.#filmsPopupPresenter.init(card);
+    this.#popupPresenterMap.set(card.id, this.#filmsPopupPresenter);
+
+    if (this.#popupPresenterMap.size >= 1) {
+      this.#popupPresenterMap.clear();
+      this.#popupPresenterMap.set(card.id, this.#filmsPopupPresenter);
+    } else {
+      this.#popupPresenterMap.set(card.id, this.#filmsPopupPresenter);
+    }
   };
 
+
   #connectFilmCardsPresenter() {
+
     this.#filmCardPresenter = new FilmsCardPresenter({
       cardsContainer: this.#cardsContainer.element,
       mainContainersComponent: this.#mainContainersComponent.element,
-      mainBody: this.#mainBody,
       loadMoreButtonClickHandler: this.#loadMoreButtonClickHandler,
       popUpPresenter:  this.#connectFilmsPopupPresenter,
-      handleFilmChange: this.#handleFilmChange
+      changeWatchlist: this.#changeWatchlist,
+      changeFavorite: this.#changeFavorite,
+      changeAlredyWatched: this.#changeAlredyWatched,
+      mainBody: this.#mainBody,
     });
   }
 
@@ -122,7 +141,22 @@ export default class ContentPresenter {
   #handleFilmChange = (updateFilm) => {
     this.#cardFilms = updateItem(this.#cardFilms, updateFilm);
     this.#filmCardPresenters.get(updateFilm.id).init(updateFilm);
-    //console.log(this.#filmCardPresenters.get(updateFilm.id));
+
+    if (this.#filmsPopupPresenter) {
+      this.#popupPresenterMap.get(updateFilm.id).init(updateFilm);
+    }
   };
 
+  //функции для изменение данных в моделях
+  #changeWatchlist = (data) => {
+    this.#handleFilmChange({...data,userDetails:{...data.userDetails, watchlist: !data.userDetails.watchlist}});
+  };
+
+  #changeFavorite = (data) => {
+    this.#handleFilmChange({...data,userDetails:{...data.userDetails, favorite: !data.userDetails.favorite}});
+  };
+
+  #changeAlredyWatched = (data) => {
+    this.#handleFilmChange({...data,userDetails:{...data.userDetails, alreadyWatched: !data.userDetails.alreadyWatched}});
+  };
 }

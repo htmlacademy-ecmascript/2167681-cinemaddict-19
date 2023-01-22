@@ -1,9 +1,7 @@
 import { humanizeTaskDueDate } from '../utils/common.js';
 import AbstractView from '../framework/view/abstract-view.js';
+import {activateButton} from '../utils/common.js';
 
-const ACTIVATE_BUTTON = ['--active', '--inactive' ];
-
-const activateButton	= (buttonData) => buttonData ? ACTIVATE_BUTTON[0] : ACTIVATE_BUTTON[1];
 
 // карточка с фильмом
 const createNewCardFilmTemplate = (card) => {
@@ -40,31 +38,22 @@ export default class NewCardFilmView extends AbstractView {
   #changeFavorite = null;
   #changeAlreadyWatched = null;
 
-  constructor({card, onClick, changeWatchlist, changeFavorite, changeAlredyWatched}) {
+
+  constructor({card, onClick, changeWatchlist, changeFavorite, changeAlredyWatched,}) {
     super();
     this.#card = card;
     this.#openPopup = onClick;
-    //ФУНКЦИЯ ИЗМЕНЕНИЯ ДАННЫХ ПО КЛИКУ
+
+    //ФУНКЦИИ ИЗМЕНЕНИЯ ДАННЫХ ПО КЛИКУ
     this.#changeWatchlist = changeWatchlist;
     this.#changeFavorite = changeFavorite;
     this.#changeAlreadyWatched = changeAlredyWatched;
 
-
-    /*  this.element.querySelector('.film-card__controls-item--add-to-watchlist')
-      .addEventListener('click',(evt) => {
-        console.log(this.#card);
-        evt.preventDefault();
-        this.#changeWatchlist(this.#card.userDetails.watchlist);
-      }); */
-
     this.element.querySelector('.film-card__controls').addEventListener('click', (evt) => {
       if (evt.target.closest('.film-card__controls-item')) {
         this.#changeDataClickHendler(evt);
-
       }
-
     });
-
 
     this.element.querySelector('img').addEventListener('click', this.#openPopupHendler);
   }
@@ -79,17 +68,19 @@ export default class NewCardFilmView extends AbstractView {
     this.#openPopup();
   };
 
+
+  // пытался привязать по классу но так и не получилось
   #changeDataClickHendler = (evt) => {
     evt.preventDefault();
     switch (evt.target.textContent) {
       case 'Mark as watched' :
-        this.#changeAlreadyWatched(this.#card.userDetails.alreadyWatched);
+        this.#changeAlreadyWatched(this.#card);
         break;
       case 'Mark as favorite' :
-        this.#changeFavorite(this.#card.userDetails.favorite);
+        this.#changeFavorite(this.#card);
         break;
       case 'Add to watchlist' :
-        this.#changeWatchlist(this.#card.userDetails.watchlist);
+        this.#changeWatchlist(this.#card);
         break;
     }
   };

@@ -1,9 +1,7 @@
 import { humanizeTaskDueDate } from '../utils/common.js';
 import AbstractView from '../framework/view/abstract-view.js';
+import {activateButton} from '../utils/common.js';
 
-const ACTIVATE_BUTTON = ['--active', '--inactive' ];
-
-const activateButton	= (buttonData) => buttonData ? ACTIVATE_BUTTON[0] : ACTIVATE_BUTTON[1];
 
 // попапп с подроным описанием фильма
 const createNewPopuppTemplate = (card) => {
@@ -128,15 +126,28 @@ const createNewPopuppTemplate = (card) => {
 export default class NewPopuppView extends AbstractView {
   #card = null;
   #btnClosedClick = null;
-  #onOn = null;
+  #changeWatchlist = null;
+  #changeFavorite = null;
+  #changeAlredyWatched = null;
 
-  constructor ({card, onBtnClick, onOn}) {
+  constructor ({card, onBtnClick, onOnchangeWatchlist, changeFavorite, changeAlredyWatched}) {
     super();
     this.#card = card;
     this.#btnClosedClick = onBtnClick;
-    this.#onOn = onOn;
+    this.#changeWatchlist = onOnchangeWatchlist;
+    this.#changeFavorite = changeFavorite;
+    this.#changeAlredyWatched = changeAlredyWatched;
 
-    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#btnClosedClickHendler );
+
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#btnClosedClickHendler);
+
+    this.element.querySelector('.film-details__controls').addEventListener('click', (evt) => {
+      if (evt.target.closest('.film-details__control-button')) {
+        this.#changeDataClickHendler(evt);
+      }
+    });
+
+
   }
 
   get template() {
@@ -146,7 +157,22 @@ export default class NewPopuppView extends AbstractView {
   #btnClosedClickHendler = (evt) => {
     evt.preventDefault();
     this.#btnClosedClick();
+
   };
 
 
+  #changeDataClickHendler = (evt) => {
+    evt.preventDefault();
+    switch (evt.target.textContent) {
+      case 'Already watched' :
+        this.#changeAlredyWatched(this.#card);
+        break;
+      case 'Add to favorites' :
+        this.#changeFavorite(this.#card);
+        break;
+      case 'Add to watchlist' :
+        this.#changeWatchlist(this.#card);
+        break;
+    }
+  };
 }

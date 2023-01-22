@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { BUTTON_STATUS } from '../mock/mocks-data.js';
+import {ACTIVATE_BUTTON} from '../const.js';
 
 const DATE_FORMAT = 'D MMMM YYYY';
 
@@ -49,7 +49,7 @@ function getRandomUniqInt (min, max) {
 }
 
 
-const changeStatus = (hohoho) => hohoho !== BUTTON_STATUS[1] ? BUTTON_STATUS[1] : BUTTON_STATUS[0];
+const activateButton	= (buttonData) => buttonData ? ACTIVATE_BUTTON[0] : ACTIVATE_BUTTON[1];
 
 
 // функция для смены данных
@@ -65,5 +65,5 @@ export {
   getRandomUniqInt,
   humanizeTaskDueDate,
   updateItem,
-  changeStatus
+  activateButton,
 };
