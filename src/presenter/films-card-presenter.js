@@ -2,34 +2,37 @@ import NewCardFilmView from '../view/card-film-view.js';
 //import NewPopuppView from '../view/popupp-details-view.js';
 import {remove, render, replace} from '../framework/render.js';
 import NewShowMoreButtonView from '../view/show-more-button-view.js';
-import { BUTTON_STATUS } from '../mock/mocks-data.js';
 
 export default class FilmsCardPresenter {
   #cardsContainer = null;
   #mainContainersComponent = null;
   #cardFilmComponent = null;
-  #popupFilmComponent = null;
   #cardsModels = null;
-  #mainBody = null;
   #loadMoreButtonComponent = null;
   #loadMoreButtonClickHandler = null;
-  #renderPopup = null;
-  #onFilmChange = null;
+  #changeWatchlist = null;
+  #changeFavorite = null;
+  #changeAlredyWatched = null;
+  #popupPresenterMap = new Map();
+  #popUpPresenter = null;
+  #mainBody = null;
 
-  constructor ({cardsContainer, mainContainersComponent, mainBody, loadMoreButtonClickHandler, popUpPresenter,
-    handleFilmChange}) {
+  constructor ({cardsContainer, mainContainersComponent, loadMoreButtonClickHandler, popUpPresenter,
+    changeWatchlist, changeFavorite, changeAlredyWatched, mainBody}) {
     this.#cardsContainer = cardsContainer;
     this.#mainContainersComponent = mainContainersComponent;
-    this.#mainBody = mainBody;
     this.#loadMoreButtonClickHandler = loadMoreButtonClickHandler;
-    this.#renderPopup = popUpPresenter;
-    this.#onFilmChange = handleFilmChange;
+    this.#popUpPresenter = popUpPresenter;
+    this.#changeWatchlist = changeWatchlist;
+    this.#changeFavorite = changeFavorite;
+    this.#changeAlredyWatched = changeAlredyWatched;
+    this.#mainBody = mainBody;
+
   }
 
 
   init(cards) {
     this.#cardsModels = cards;
-
     const prevCardFilmComponent = this.#cardFilmComponent;
 
 
@@ -39,8 +42,9 @@ export default class FilmsCardPresenter {
 
         this.#renderPopup(this.#cardsModels);
       },
-      haha: this.hahaha,
-      changeChange: this.changeChange,
+      changeWatchlist: this.#changeWatchlist,
+      changeFavorite: this.#changeFavorite,
+      changeAlredyWatched: this.#changeAlredyWatched,
 
     });
 
@@ -61,6 +65,10 @@ export default class FilmsCardPresenter {
     remove(this.#cardFilmComponent);
   }
 
+  #renderPopup (model) {
+    this.#popUpPresenter(model);
+  }
+
 
   renderShowMoreButton() {
     this.#loadMoreButtonComponent = new NewShowMoreButtonView({
@@ -68,19 +76,5 @@ export default class FilmsCardPresenter {
     });
     render(this.#loadMoreButtonComponent, this.#mainContainersComponent);
   }
-
-  // ДАННАЯ ФУНКЦИЯ ИЗМЕНЯЕТ СТАТУС КНОПКИ (ОРИГИНАЛ ЭТОЙ ФУНКЦИИ НАХОДИТЬСЯ В UTILS/COMMON.JS)
-  hahaha = (hohoho) => hohoho !== BUTTON_STATUS[1] ? BUTTON_STATUS[1] : BUTTON_STATUS[0];
-
-
-  /* ФУНКЦИЯ ДЛЯ ИЗМЕНЕНИЯ ДАННЫХ В МОДЕЛЯХ - ОНА ПЕРЕДАЕТСЯ В VIEW/CARD-FILM-VIEW
-  ИМПОРТИРУЕТСЯ ИЗ CONTENT-PReSENTER
-  ПРОБЛЕМА КАК РАЗ ВО ВЛОЖЕННОСТИ ДАННОЙ СТРУКТУРЫ. НЕ ПОЛУЧАЕТСЯ ТОЧЕЧНО ИЗМЕНИТЬ ДАННЫЕ
-  В ЭТОМ ВАРИАНТЕ УМЕНЯ ОСТАЕТСЯ ЛИШЬ КУСОК ОТ МОДЕЛЬКИ - userDetails */
-  changeChange = (data) => {
-    this.#onFilmChange({...this.#cardsModels.userDetails, watchlist : this.hahaha(data)});
-
-  };
-
 
 }
