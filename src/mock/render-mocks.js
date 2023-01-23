@@ -19,7 +19,6 @@ const COMMENTS_COUNT_INC = {
 const createFilmInfo = () => ({
   id: createFilmId() ,
   comments: generateArrayComments(),
-  lol: 'lolushka',
   filmInfo: {
     title: getRandomIntInclusiveArrayElement(FILM_NAME),
     alternativeTitle: `Origin: ${FILM_NAME}.`,

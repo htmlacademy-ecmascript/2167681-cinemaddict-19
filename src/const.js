@@ -4,9 +4,9 @@ const FilterType = {
   FAVORITE: 'Favorites',
 };
 
-const ACTIVATE_BUTTON = ['--active', '--inactive' ];
+const ACTIVATE_MODE = ['active', 'inactive' ];
 
 export {
   FilterType,
-  ACTIVATE_BUTTON
+  ACTIVATE_MODE
 };
