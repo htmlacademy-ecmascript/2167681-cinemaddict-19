@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {ACTIVATE_BUTTON} from '../const.js';
+import {ACTIVATE_MODE} from '../const.js';
 
 const DATE_FORMAT = 'D MMMM YYYY';
 
@@ -49,7 +49,7 @@ function getRandomUniqInt (min, max) {
 }
 
 
-const activateButton	= (buttonData) => buttonData ? ACTIVATE_BUTTON[0] : ACTIVATE_BUTTON[1];
+const activateButton	= (buttonData) => buttonData ? ACTIVATE_MODE[0] : ACTIVATE_MODE[1];
 
 
 // функция для смены данных

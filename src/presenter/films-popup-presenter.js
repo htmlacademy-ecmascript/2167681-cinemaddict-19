@@ -1,5 +1,7 @@
 import NewPopuppView from '../view/popupp-details-view.js';
 import {remove, render, replace} from '../framework/render.js';
+import {ACTIVATE_MODE} from '../const.js';
+
 
 export default class FilmsPopupPresenter {
   #popupFilmComponent = null;
@@ -9,6 +11,7 @@ export default class FilmsPopupPresenter {
   #changeWatchlist = null;
   #changeFavorite = null;
   #changeAlredyWatched = null;
+  popupStatus = ACTIVATE_MODE[0];
 
   constructor({mainBody, changeWatchlist, changeFavorite, changeAlredyWatched}) {
     this.#mainBody = mainBody;
@@ -34,7 +37,6 @@ export default class FilmsPopupPresenter {
       changeAlredyWatched: this.#changeAlredyWatched,
 
     });
-
 
     if (prevPopupFilmComponent === null) {
       render(this.#popupFilmComponent, this.#mainBody);
@@ -67,16 +69,17 @@ export default class FilmsPopupPresenter {
   destroy (){
     remove(this.#popupFilmComponent);
     document.removeEventListener('keydown', this.onEscKeyClosed);
+    this.popupStatus = ACTIVATE_MODE[1];
   }
 
 
   #onClickClosedPopupDetails = () => {
-    if (this.#popupFilmComponent){
+    if (this.#popupFilmComponent) {
       this.#mainBody.classList.remove('hide-overflow');
       this.#mainBody.removeChild(this.#popupFilmComponent.element);
       document.removeEventListener('keydown', this.onEscKeyClosed);
+      this.popupStatus = ACTIVATE_MODE[1];
     }
-    remove(this.#popupFilmComponent);
 
   };
 

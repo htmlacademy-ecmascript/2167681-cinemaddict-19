@@ -3,6 +3,7 @@ import NewCardFilmView from '../view/card-film-view.js';
 import {remove, render, replace} from '../framework/render.js';
 import NewShowMoreButtonView from '../view/show-more-button-view.js';
 
+
 export default class FilmsCardPresenter {
   #cardsContainer = null;
   #mainContainersComponent = null;

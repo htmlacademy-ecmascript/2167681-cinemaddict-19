@@ -6,14 +6,18 @@ import NewCardsFilmContainerView from '../view/cards-film-container-view.js';
 import NewFilterTitleView from '../view/filter-title-view.js';
 import FilmsCardPresenter from './films-card-presenter.js';
 import FilmsPopupPresenter from './films-popup-presenter.js';
+import NewFiltersFilmView from '../view/filters-view.js';
+import {ACTIVATE_MODE} from '../const.js';
 
 const FILMS_COUNT_PER_STEP = 5;
+
 
 export default class ContentPresenter {
   #filmsMainContainer = new NewFilmsMainContainerView();
   #mainContainersComponent = new NewMainContainersComponentView();
   #cardsContainer = new NewCardsFilmContainerView();
   #filterTitleView = new NewFilterTitleView();
+  #filtersFilmView = new NewFiltersFilmView();
   #filmContainer;
   #filmInfoModel;
   #mainBody = null;
@@ -23,9 +27,10 @@ export default class ContentPresenter {
   #filmsPopupPresenter = null;
   #filmCardPresenters = new Map();
   #popupPresenterMap = new Map();
+  #popupStatus = ACTIVATE_MODE[1];
 
 
-  constructor({filmContainer, filmInfoModel, mainBody,}) {
+  constructor({filmContainer, filmInfoModel, mainBody}) {
     this.#filmContainer = filmContainer;
     this.#filmInfoModel = filmInfoModel;
     this.#mainBody = mainBody;
@@ -39,9 +44,9 @@ export default class ContentPresenter {
 
 
   #connectFilmsPopupPresenter = (card) => {
+
     if(this.#filmsPopupPresenter) {
       this.#filmsPopupPresenter.destroy();
-      //this.#filmsPopupPresenter = null;
     }
 
     this.#filmsPopupPresenter = new FilmsPopupPresenter({
@@ -49,10 +54,11 @@ export default class ContentPresenter {
       changeWatchlist: this.#changeWatchlist,
       changeFavorite: this.#changeFavorite,
       changeAlredyWatched: this.#changeAlredyWatched,
+      popupStatus: this.#popupStatus
     });
     this.#filmsPopupPresenter.init(card);
+    this.#popupStatus = this.#filmsPopupPresenter.popupStatus;
     this.#popupPresenterMap.set(card.id, this.#filmsPopupPresenter);
-
     if (this.#popupPresenterMap.size >= 1) {
       this.#popupPresenterMap.clear();
       this.#popupPresenterMap.set(card.id, this.#filmsPopupPresenter);
@@ -97,7 +103,7 @@ export default class ContentPresenter {
 
   //отрисовка главного контайнера
   #renderMainContainer() {
-
+    render(this.#filtersFilmView, this.#filmContainer);
     render(this.#filmsMainContainer, this.#filmContainer);
     render(this.#mainContainersComponent, this.#filmsMainContainer.element);
     render(this.#cardsContainer, this.#mainContainersComponent.element);
@@ -138,15 +144,13 @@ export default class ContentPresenter {
     this.#filmCardPresenters.set(cards.id, this.#filmCardPresenter);
   }
 
-  /* ПРОБЛЕМА В ЭТОЙ ФУНКЦИИ. ПОЧЕМУ ТО НА ПЕРВЫЙ РАЗ ОНА СРАБАТЫВАЕТ НОРМАЛЬНО, НО КОГДА Я ПЕРЕВЫЗЫВАЮ ПОПАПП ИЛИ ПОСЛЕ ЕГО
-  ЗАКРЫТИЯ КЛИКАЮ ПО МИНИАТЮРЕ ТО ВСЕ ЛОМАЕТСЯ */
-
   #handleFilmChange = (updateFilm) => {
     this.#cardFilms = updateItem(this.#cardFilms, updateFilm);
     this.#filmCardPresenters.get(updateFilm.id).init(updateFilm);
 
-    if (this.#filmsPopupPresenter) {
+    if (this.#filmsPopupPresenter.popupStatus === ACTIVATE_MODE[0]) {
       this.#popupPresenterMap.get(updateFilm.id).init(updateFilm);
+
     }
   };
 

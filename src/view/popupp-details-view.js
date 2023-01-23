@@ -74,9 +74,9 @@ const createNewPopuppTemplate = (card) => {
 	 </div>
 
 	 <section class="film-details__controls">
-		<button type="button" class="film-details__control-button film-details__control-button${activateButton(userDetails.watchlist)} film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
-		<button type="button" class="film-details__control-button film-details__control-button${activateButton(userDetails.alreadyWatched)}" id="watched" name="watched">Already watched</button>
-		<button type="button" class="film-details__control-button film-details__control-button${activateButton(userDetails.favorite)}" id="favorite" name="favorite">Add to favorites</button>
+		<button type="button" class="film-details__control-button film-details__control-button--${activateButton(userDetails.watchlist)} film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
+		<button type="button" class="film-details__control-button film-details__control-button--${activateButton(userDetails.alreadyWatched)}" id="watched" name="watched">Already watched</button>
+		<button type="button" class="film-details__control-button film-details__control-button--${activateButton(userDetails.favorite)}" id="favorite" name="favorite">Add to favorites</button>
 	 </section>
   </div>
 
@@ -130,11 +130,11 @@ export default class NewPopuppView extends AbstractView {
   #changeFavorite = null;
   #changeAlredyWatched = null;
 
-  constructor ({card, onBtnClick, onOnchangeWatchlist, changeFavorite, changeAlredyWatched}) {
+  constructor ({card, onBtnClick, changeWatchlist, changeFavorite, changeAlredyWatched}) {
     super();
     this.#card = card;
     this.#btnClosedClick = onBtnClick;
-    this.#changeWatchlist = onOnchangeWatchlist;
+    this.#changeWatchlist = changeWatchlist;
     this.#changeFavorite = changeFavorite;
     this.#changeAlredyWatched = changeAlredyWatched;
 
