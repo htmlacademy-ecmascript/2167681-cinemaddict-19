@@ -27,7 +27,6 @@ export default class ContentPresenter {
   #filmsPopupPresenter = null;
   #filmCardPresenters = new Map();
   #popupPresenterMap = new Map();
-  #popupStatus = ACTIVATE_MODE[1];
 
 
   constructor({filmContainer, filmInfoModel, mainBody}) {
@@ -54,10 +53,8 @@ export default class ContentPresenter {
       changeWatchlist: this.#changeWatchlist,
       changeFavorite: this.#changeFavorite,
       changeAlredyWatched: this.#changeAlredyWatched,
-      popupStatus: this.#popupStatus
     });
     this.#filmsPopupPresenter.init(card);
-    this.#popupStatus = this.#filmsPopupPresenter.popupStatus;
     this.#popupPresenterMap.set(card.id, this.#filmsPopupPresenter);
     if (this.#popupPresenterMap.size >= 1) {
       this.#popupPresenterMap.clear();
