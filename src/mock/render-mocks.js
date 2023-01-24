@@ -38,10 +38,10 @@ const createFilmInfo = () => ({
     description: getRandomIntInclusiveArrayElement(DESCRIPTIONS)
   },
   userDetails: {
-    watchlist: getRandomIntInclusiveArrayElement(BUTTON_STATUS),
-    alreadyWatched: getRandomIntInclusiveArrayElement(BUTTON_STATUS),
+    watchlist: getRandomIntInclusiveArrayElement(Object.values(BUTTON_STATUS)),
+    alreadyWatched: getRandomIntInclusiveArrayElement(Object.values(BUTTON_STATUS)),
     watchingDate: getDate(DATE),
-    favorite: getRandomIntInclusiveArrayElement(BUTTON_STATUS),
+    favorite: getRandomIntInclusiveArrayElement(Object.values(BUTTON_STATUS)),
   }
 });
 //структура комментария

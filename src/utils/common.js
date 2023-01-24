@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-
+import {ACTIVATE_MODE} from '../const.js';
 
 const DATE_FORMAT = 'D MMMM YYYY';
 
@@ -49,6 +49,13 @@ function getRandomUniqInt (min, max) {
 }
 
 
+const activateButton	= (buttonData) => buttonData ? ACTIVATE_MODE[0] : ACTIVATE_MODE[1];
+
+
+// функция для смены данных
+
+const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
+
 export {
   getRandomIntInclusive,
   getRandomIntInclusiveNotFloor,
@@ -57,4 +64,6 @@ export {
   nowDate,
   getRandomUniqInt,
   humanizeTaskDueDate,
+  updateItem,
+  activateButton,
 };

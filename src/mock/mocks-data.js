@@ -14,7 +14,10 @@ const DURATION = ['1h 52m', '50m', '2h 16m', '5h 32m', '2h 20m'];
 
 const DATE = ['2001.12.21', '1993.11.8', '2014.4.7', '1900.5.12', '1979.2.1', '1988.2.5', '1945.1.1', '2007.8.12'];
 
-const BUTTON_STATUS = ['--active', '--inactive'];
+const BUTTON_STATUS = {
+  ACTIVE: true,
+  INACTIVE: false,
+};
 
 
 const EMOTION = ['smile', 'sleeping', 'puke', 'angry'];

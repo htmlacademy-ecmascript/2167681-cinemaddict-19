@@ -1,5 +1,8 @@
 import { humanizeTaskDueDate } from '../utils/common.js';
 import AbstractView from '../framework/view/abstract-view.js';
+import {activateButton} from '../utils/common.js';
+import { FILMS_BUTTON_TYPE } from '../const.js';
+
 
 // попапп с подроным описанием фильма
 const createNewPopuppTemplate = (card) => {
@@ -72,9 +75,9 @@ const createNewPopuppTemplate = (card) => {
 	 </div>
 
 	 <section class="film-details__controls">
-		<button type="button" class="film-details__control-button film-details__control-button${userDetails.watchlist} film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
-		<button type="button" class="film-details__control-button film-details__control-button${userDetails.alreadyWatched}" id="watched" name="watched">Already watched</button>
-		<button type="button" class="film-details__control-button film-details__control-button${userDetails.favorite}" id="favorite" name="favorite">Add to favorites</button>
+		<button type="button" class="film-details__control-button film-details__control-button--${activateButton(userDetails.watchlist)} film-details__control-button--watchlist" id="watchlist" name="watchlist" data-details-button-type=${FILMS_BUTTON_TYPE.watchlist}>Add to watchlist</button>
+		<button type="button" class="film-details__control-button film-details__control-button--${activateButton(userDetails.alreadyWatched)}" id="watched" name="watched" data-details-button-type=${FILMS_BUTTON_TYPE.alreadyWatched}>Already watched</button>
+		<button type="button" class="film-details__control-button film-details__control-button--${activateButton(userDetails.favorite)}" id="favorite" name="favorite" data-details-button-type=${FILMS_BUTTON_TYPE.favorite}>Add to favorites</button>
 	 </section>
   </div>
 
@@ -124,13 +127,28 @@ const createNewPopuppTemplate = (card) => {
 export default class NewPopuppView extends AbstractView {
   #card = null;
   #btnClosedClick = null;
+  #changeWatchlist = null;
+  #changeFavorite = null;
+  #changeAlredyWatched = null;
 
-  constructor ({card, onBtnClick}) {
+  constructor ({card, onBtnClick, changeWatchlist, changeFavorite, changeAlredyWatched}) {
     super();
     this.#card = card;
     this.#btnClosedClick = onBtnClick;
+    this.#changeWatchlist = changeWatchlist;
+    this.#changeFavorite = changeFavorite;
+    this.#changeAlredyWatched = changeAlredyWatched;
+
 
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#btnClosedClickHendler);
+
+    this.element.querySelector('.film-details__controls').addEventListener('click', (evt) => {
+      if (evt.target.closest('.film-details__control-button')) {
+        this.#changeDataClickHendler(evt);
+      }
+    });
+
+
   }
 
   get template() {
@@ -140,5 +158,22 @@ export default class NewPopuppView extends AbstractView {
   #btnClosedClickHendler = (evt) => {
     evt.preventDefault();
     this.#btnClosedClick();
+
+  };
+
+
+  #changeDataClickHendler = (evt) => {
+    evt.preventDefault();
+    switch (evt.target.dataset.detailsButtonType) {
+      case FILMS_BUTTON_TYPE.alreadyWatched :
+        this.#changeAlredyWatched(this.#card);
+        break;
+      case FILMS_BUTTON_TYPE.favorite :
+        this.#changeFavorite(this.#card);
+        break;
+      case FILMS_BUTTON_TYPE.watchlist :
+        this.#changeWatchlist(this.#card);
+        break;
+    }
   };
 }
