@@ -11,7 +11,7 @@ export default class FilmsPopupPresenter {
   #changeWatchlist = null;
   #changeFavorite = null;
   #changeAlredyWatched = null;
-  popupStatus = ACTIVATE_MODE[0];
+  popupStatus = ACTIVATE_MODE[1];
 
   constructor({mainBody, changeWatchlist, changeFavorite, changeAlredyWatched}) {
     this.#mainBody = mainBody;
@@ -51,7 +51,6 @@ export default class FilmsPopupPresenter {
 
     remove(prevPopupFilmComponent);
 
-    this.#mainBody.classList.add('hide-overflow');
     document.addEventListener('keydown', this.onEscKeyClosed );
   }
 

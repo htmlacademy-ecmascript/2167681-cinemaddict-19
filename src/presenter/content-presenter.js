@@ -7,7 +7,6 @@ import NewFilterTitleView from '../view/filter-title-view.js';
 import FilmsCardPresenter from './films-card-presenter.js';
 import FilmsPopupPresenter from './films-popup-presenter.js';
 import NewFiltersFilmView from '../view/filters-view.js';
-import {ACTIVATE_MODE} from '../const.js';
 
 const FILMS_COUNT_PER_STEP = 5;
 
@@ -26,7 +25,6 @@ export default class ContentPresenter {
   #filmCardPresenter = null;
   #filmsPopupPresenter = null;
   #filmCardPresenters = new Map();
-  #popupPresenterMap = new Map();
 
 
   constructor({filmContainer, filmInfoModel, mainBody}) {
@@ -55,13 +53,6 @@ export default class ContentPresenter {
       changeAlredyWatched: this.#changeAlredyWatched,
     });
     this.#filmsPopupPresenter.init(card);
-    this.#popupPresenterMap.set(card.id, this.#filmsPopupPresenter);
-    if (this.#popupPresenterMap.size >= 1) {
-      this.#popupPresenterMap.clear();
-      this.#popupPresenterMap.set(card.id, this.#filmsPopupPresenter);
-    } else {
-      this.#popupPresenterMap.set(card.id, this.#filmsPopupPresenter);
-    }
   };
 
 
@@ -144,11 +135,10 @@ export default class ContentPresenter {
   #handleFilmChange = (updateFilm) => {
     this.#cardFilms = updateItem(this.#cardFilms, updateFilm);
     this.#filmCardPresenters.get(updateFilm.id).init(updateFilm);
-
-    if (this.#filmsPopupPresenter.popupStatus === ACTIVATE_MODE[0]) {
-      this.#popupPresenterMap.get(updateFilm.id).init(updateFilm);
-
+    if (this.#filmsPopupPresenter) {
+      this.#filmsPopupPresenter.init(updateFilm);
     }
+
   };
 
   //функции для изменение данных в моделях
