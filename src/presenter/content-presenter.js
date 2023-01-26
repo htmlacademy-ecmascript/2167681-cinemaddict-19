@@ -1,5 +1,5 @@
-import {render, RenderPosition, remove} from '../framework/render.js';
-import {updateItem} from '../utils/common.js';
+import {render, RenderPosition} from '../framework/render.js';
+import {updateItem, sortRating, sortDate} from '../utils/common.js';
 import NewFilmsMainContainerView from '../view/films-main-container-view.js';
 import NewMainContainersComponentView from '../view/main-containers-component-view.js';
 import NewCardsFilmContainerView from '../view/cards-film-container-view.js';
@@ -7,16 +7,15 @@ import NewFilterTitleView from '../view/filter-title-view.js';
 import FilmsCardPresenter from './films-card-presenter.js';
 import FilmsPopupPresenter from './films-popup-presenter.js';
 import NewFiltersFilmView from '../view/filters-view.js';
+import {SortMode} from '../const.js';
 
 const FILMS_COUNT_PER_STEP = 5;
-
 
 export default class ContentPresenter {
   #filmsMainContainer = new NewFilmsMainContainerView();
   #mainContainersComponent = new NewMainContainersComponentView();
   #cardsContainer = new NewCardsFilmContainerView();
   #filterTitleView = new NewFilterTitleView();
-  #filtersFilmView = new NewFiltersFilmView();
   #filmContainer;
   #filmInfoModel;
   #mainBody = null;
@@ -25,6 +24,9 @@ export default class ContentPresenter {
   #filmCardPresenter = null;
   #filmsPopupPresenter = null;
   #filmCardPresenters = new Map();
+  #currentSortType = SortMode.DEFAULT;
+  #sortComponent = null;
+  #sourcedFilmCard = [];
 
 
   constructor({filmContainer, filmInfoModel, mainBody}) {
@@ -36,7 +38,7 @@ export default class ContentPresenter {
   init() {
     this.#cardFilms = [...this.#filmInfoModel.cards];
     this.#renderMainContainer();
-
+    this.#sourcedFilmCard = [...this.#filmInfoModel.cards];
   }
 
 
@@ -91,12 +93,34 @@ export default class ContentPresenter {
 
   //отрисовка главного контайнера
   #renderMainContainer() {
-    render(this.#filtersFilmView, this.#filmContainer);
+    this.#renderSort();
     render(this.#filmsMainContainer, this.#filmContainer);
     render(this.#mainContainersComponent, this.#filmsMainContainer.element);
     render(this.#cardsContainer, this.#mainContainersComponent.element);
     render(this.#filterTitleView, this.#mainContainersComponent.element, RenderPosition.AFTERBEGIN);
 
+
+    this.filmsRender();
+    //this.handleSortRaiting();
+  }
+
+  clearFilmList() {
+    this.#filmCardPresenters.forEach((presenter) => {
+      presenter.destroy();
+    });
+    this.#filmCardPresenters.clear();
+    this.#arrayFilmsCount = FILMS_COUNT_PER_STEP;
+
+  }
+
+  #renderCards(from, to) {
+    this.#cardFilms
+      .slice(from, to)
+      .forEach((card) => this.#renderCard(card));
+  }
+
+  // отрисовка фильмов по умолчанию
+  filmsRender = () => {
     if (this.#cardFilms.length === 0) {
       this.#renderEmptyTittle();
     } else {
@@ -107,23 +131,50 @@ export default class ContentPresenter {
       this.#filmCardPresenter.renderShowMoreButton();
     }
 
-  }
+  };
 
-  clearFilmList() {
-    this.#filmCardPresenters.forEach((presenter) => {
-      presenter.destroy();
-      this.#filmCardPresenters.clear();
-      this.#arrayFilmsCount = FILMS_COUNT_PER_STEP;
-      remove(this.#filmCardPresenter.renderShowMoreButton());
+
+  //сортировка фильмов
+  #sortFilmCards = (sortMode) => {
+
+    switch(sortMode) {
+      case SortMode.BYDATE:
+        sortDate(this.#cardFilms);
+        break;
+
+      case SortMode.BYRATING:
+        sortRating(this.#cardFilms);
+        break;
+
+      case SortMode.DEFAULT:
+
+        this.#cardFilms = [...this.#sourcedFilmCard];
+        break;
+    }
+
+    this.#currentSortType = sortMode;
+  };
+
+
+  #handleSortTypeChange = (sortMode) => {
+    if(this.#currentSortType === sortMode) {
+      return;
+    }
+
+    this.#sortFilmCards(sortMode);
+    this.clearFilmList();
+    this.filmsRender();
+
+  };
+
+  #renderSort = () => {
+
+    this.#sortComponent = new NewFiltersFilmView({
+      onSortTypeChange: this.#handleSortTypeChange
     });
-  }
 
-  #renderCards(from, to) {
-    this.#cardFilms
-      .slice(from, to)
-      .forEach((card) => this.#renderCard(card));
-  }
-
+    render(this.#sortComponent, this.#filmContainer);
+  };
 
   // функция отрисовки карточек
   #renderCard(cards) {
@@ -132,6 +183,7 @@ export default class ContentPresenter {
     this.#filmCardPresenters.set(cards.id, this.#filmCardPresenter);
   }
 
+  // функция изменения данных во вью
   #handleFilmChange = (updateFilm) => {
     this.#cardFilms = updateItem(this.#cardFilms, updateFilm);
     this.#filmCardPresenters.get(updateFilm.id).init(updateFilm);

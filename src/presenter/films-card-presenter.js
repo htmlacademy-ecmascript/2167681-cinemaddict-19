@@ -36,7 +36,6 @@ export default class FilmsCardPresenter {
     this.#cardsModels = cards;
     const prevCardFilmComponent = this.#cardFilmComponent;
 
-
     this.#cardFilmComponent = new NewCardFilmView({
       card: this.#cardsModels,
       onClick: () => {
@@ -64,6 +63,7 @@ export default class FilmsCardPresenter {
 
   destroy() {
     remove(this.#cardFilmComponent);
+    remove(this.#loadMoreButtonComponent);
   }
 
   #renderPopup (model) {

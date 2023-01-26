@@ -24,7 +24,6 @@ const contentPresenter = new ContentPresenter({
 });
 
 render(new NewUserRangView(), siteHeaderElement);
-//render(new NewFiltersFilmView(), siteMainElement);
 render(new NewNavFilmView({filters}), siteMainElement, RenderPosition.AFTERBEGIN);
 
 contentPresenter.init();

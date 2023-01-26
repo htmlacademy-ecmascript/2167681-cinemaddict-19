@@ -56,6 +56,13 @@ const activateButton	= (buttonData) => buttonData ? ACTIVATE_MODE[0] : ACTIVATE_
 
 const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
 
+
+//сортировки
+const sortRating = (data) => data.sort((a,b) => a.filmInfo.totalRating > b.filmInfo.totalRating ? -1 : 1);
+
+const sortDate = (data) => data.sort((a,b) => a.filmInfo.release.date > b.filmInfo.release.date ? -1 : 1);
+
+
 export {
   getRandomIntInclusive,
   getRandomIntInclusiveNotFloor,
@@ -66,4 +73,6 @@ export {
   humanizeTaskDueDate,
   updateItem,
   activateButton,
+  sortRating,
+  sortDate,
 };

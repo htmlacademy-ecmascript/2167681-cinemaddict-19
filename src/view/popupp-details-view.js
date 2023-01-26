@@ -1,7 +1,7 @@
 import { humanizeTaskDueDate } from '../utils/common.js';
 import AbstractView from '../framework/view/abstract-view.js';
 import {activateButton} from '../utils/common.js';
-import { FILMS_BUTTON_TYPE } from '../const.js';
+import { FILMS_BUTTON_TYPE, SortMode } from '../const.js';
 
 
 // попапп с подроным описанием фильма
@@ -75,7 +75,7 @@ const createNewPopuppTemplate = (card) => {
 	 </div>
 
 	 <section class="film-details__controls">
-		<button type="button" class="film-details__control-button film-details__control-button--${activateButton(userDetails.watchlist)} film-details__control-button--watchlist" id="watchlist" name="watchlist" data-details-button-type=${FILMS_BUTTON_TYPE.watchlist}>Add to watchlist</button>
+		<button type="button" class="film-details__control-button film-details__control-button--${activateButton(userDetails.watchlist)} film-details__control-button--watchlist" id="watchlist" name="watchlist" data-details-button-type=${SortMode.DEFAULT}>Add to watchlist</button>
 		<button type="button" class="film-details__control-button film-details__control-button--${activateButton(userDetails.alreadyWatched)}" id="watched" name="watched" data-details-button-type=${FILMS_BUTTON_TYPE.alreadyWatched}>Already watched</button>
 		<button type="button" class="film-details__control-button film-details__control-button--${activateButton(userDetails.favorite)}" id="favorite" name="favorite" data-details-button-type=${FILMS_BUTTON_TYPE.favorite}>Add to favorites</button>
 	 </section>
@@ -171,7 +171,7 @@ export default class NewPopuppView extends AbstractView {
       case FILMS_BUTTON_TYPE.favorite :
         this.#changeFavorite(this.#card);
         break;
-      case FILMS_BUTTON_TYPE.watchlist :
+      case SortMode.DEFAULT :
         this.#changeWatchlist(this.#card);
         break;
     }
