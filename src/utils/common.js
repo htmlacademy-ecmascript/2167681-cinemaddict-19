@@ -49,12 +49,20 @@ function getRandomUniqInt (min, max) {
 }
 
 
-const activateButton	= (buttonData) => buttonData ? ACTIVATE_MODE[0] : ACTIVATE_MODE[1];
+const activateButton	= (buttonData) => buttonData ? ACTIVATE_MODE.ACTIVE : ACTIVATE_MODE.INACTIVE;
 
 
 // функция для смены данных
 
 const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
+
+
+//сортировки
+
+const sortRating = (a,b) => a.filmInfo.totalRating > b.filmInfo.totalRating ? -1 : 1;
+
+const sortDate = (a,b) => a.filmInfo.release.date > b.filmInfo.release.date ? -1 : 1;
+
 
 export {
   getRandomIntInclusive,
@@ -66,4 +74,6 @@ export {
   humanizeTaskDueDate,
   updateItem,
   activateButton,
+  sortRating,
+  sortDate,
 };

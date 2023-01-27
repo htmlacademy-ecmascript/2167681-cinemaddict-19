@@ -4,16 +4,27 @@ const FilterType = {
   FAVORITE: 'Favorites',
 };
 
-const ACTIVATE_MODE = ['active', 'inactive' ];
+const ACTIVATE_MODE = {
+  ACTIVE: 'active',
+  INACTIVE: 'inactive'
+};
 
 const FILMS_BUTTON_TYPE = {
-  watchlist: 'watchlist',
-  alreadyWatched: 'alreadyWatched',
-  favorite: 'favorite',
+  WATCHLIST: 'watchlist',
+  ALREADY_WATCHED: 'already-watched',
+  FAVORITE: 'favorite',
 };
+
+const SortMode = {
+  DEFAULT: 'default',
+  BY_DATE: 'by-date',
+  BY_RATING: 'by-rating',
+};
+
 
 export {
   FilterType,
   ACTIVATE_MODE,
-  FILMS_BUTTON_TYPE
+  FILMS_BUTTON_TYPE,
+  SortMode,
 };
