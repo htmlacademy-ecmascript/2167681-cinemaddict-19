@@ -49,7 +49,7 @@ function getRandomUniqInt (min, max) {
 }
 
 
-const activateButton	= (buttonData) => buttonData ? ACTIVATE_MODE[0] : ACTIVATE_MODE[1];
+const activateButton	= (buttonData) => buttonData ? ACTIVATE_MODE.ACTIVE : ACTIVATE_MODE.INACTIVE;
 
 
 // функция для смены данных

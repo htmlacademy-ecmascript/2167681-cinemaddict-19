@@ -4,7 +4,10 @@ const FilterType = {
   FAVORITE: 'Favorites',
 };
 
-const ACTIVATE_MODE = ['active', 'inactive' ];
+const ACTIVATE_MODE = {
+  ACTIVE: 'active',
+  INACTIVE: 'inactive'
+};
 
 const FILMS_BUTTON_TYPE = {
   WATCHLIST: 'watchlist',
