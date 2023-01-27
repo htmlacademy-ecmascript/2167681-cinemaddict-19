@@ -7,22 +7,21 @@ const FilterType = {
 const ACTIVATE_MODE = ['active', 'inactive' ];
 
 const FILMS_BUTTON_TYPE = {
-  watchlist: 'watchlist',
-  alreadyWatched: 'alreadyWatched1',
-  favorite: 'favorite',
+  WATCHLIST: 'watchlist',
+  ALREADY_WATCHED: 'already-watched',
+  FAVORITE: 'favorite',
 };
 
 const SortMode = {
   DEFAULT: 'default',
-  BYDATE: 'byDate',
-  BYRATING: 'byRating',
+  BY_DATE: 'by-date',
+  BY_RATING: 'by-rating',
 };
 
-const pizda = 'zdraste';
+
 export {
   FilterType,
   ACTIVATE_MODE,
   FILMS_BUTTON_TYPE,
   SortMode,
-  pizda
 };

@@ -58,9 +58,10 @@ const updateItem = (items, update) => items.map((item) => item.id === update.id 
 
 
 //сортировки
-const sortRating = (data) => data.sort((a,b) => a.filmInfo.totalRating > b.filmInfo.totalRating ? -1 : 1);
 
-const sortDate = (data) => data.sort((a,b) => a.filmInfo.release.date > b.filmInfo.release.date ? -1 : 1);
+const sortRating = (a,b) => a.filmInfo.totalRating > b.filmInfo.totalRating ? -1 : 1;
+
+const sortDate = (a,b) => a.filmInfo.release.date > b.filmInfo.release.date ? -1 : 1;
 
 
 export {

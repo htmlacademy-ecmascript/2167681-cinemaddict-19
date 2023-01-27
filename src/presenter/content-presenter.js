@@ -6,7 +6,7 @@ import NewCardsFilmContainerView from '../view/cards-film-container-view.js';
 import NewFilterTitleView from '../view/filter-title-view.js';
 import FilmsCardPresenter from './films-card-presenter.js';
 import FilmsPopupPresenter from './films-popup-presenter.js';
-import NewFiltersFilmView from '../view/filters-view.js';
+import NewSortsFilmView from '../view/sort-view.js';
 import {SortMode} from '../const.js';
 
 const FILMS_COUNT_PER_STEP = 5;
@@ -100,8 +100,7 @@ export default class ContentPresenter {
     render(this.#filterTitleView, this.#mainContainersComponent.element, RenderPosition.AFTERBEGIN);
 
 
-    this.filmsRender();
-    //this.handleSortRaiting();
+    this.#renderFilms();
   }
 
   clearFilmList() {
@@ -120,7 +119,7 @@ export default class ContentPresenter {
   }
 
   // отрисовка фильмов по умолчанию
-  filmsRender = () => {
+  #renderFilms = () => {
     if (this.#cardFilms.length === 0) {
       this.#renderEmptyTittle();
     } else {
@@ -138,16 +137,15 @@ export default class ContentPresenter {
   #sortFilmCards = (sortMode) => {
 
     switch(sortMode) {
-      case SortMode.BYDATE:
-        sortDate(this.#cardFilms);
+      case SortMode.BY_DATE:
+        this.#cardFilms.sort(sortDate);
         break;
 
-      case SortMode.BYRATING:
-        sortRating(this.#cardFilms);
+      case SortMode.BY_RATING:
+        this.#cardFilms.sort(sortRating);
         break;
 
       case SortMode.DEFAULT:
-
         this.#cardFilms = [...this.#sourcedFilmCard];
         break;
     }
@@ -163,13 +161,13 @@ export default class ContentPresenter {
 
     this.#sortFilmCards(sortMode);
     this.clearFilmList();
-    this.filmsRender();
+    this.#renderFilms();
 
   };
 
   #renderSort = () => {
 
-    this.#sortComponent = new NewFiltersFilmView({
+    this.#sortComponent = new NewSortsFilmView({
       onSortTypeChange: this.#handleSortTypeChange
     });
 
