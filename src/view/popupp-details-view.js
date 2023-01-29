@@ -1,13 +1,42 @@
 import { humanizeTaskDueDate } from '../utils/common.js';
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {activateButton} from '../utils/common.js';
-import { FILMS_BUTTON_TYPE, SortMode } from '../const.js';
+import {FILMS_BUTTON_TYPE, START_VALUE, EMOTION} from '../const.js';
+
+
+const createEmotionTemplate = (emotion) =>
+  `<img src="images/emoji/${emotion}.png" width="55" height="55" alt="emoji-smile">`;
+
+
+const createCommentTempalte = (comments) => comments.map((one) =>{
+  const { author, comment, date, emotion} = one;
+  const DATE_FORMAT = 'D MMMM YYYY H:MM';
+  const commentDate = humanizeTaskDueDate(date, DATE_FORMAT);
+
+  return `<li class="film-details__comment">
+	<span class="film-details__comment-emoji">
+	  <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-smile">
+	</span>
+	<div>
+	  <p class="film-details__comment-text">${comment}</p>
+	  <p class="film-details__comment-info">
+		 <span class="film-details__comment-author">${author}</span>
+		 <span class="film-details__comment-day">${commentDate}</span>
+		 <button class="film-details__comment-delete">Delete</button>
+	  </p>
+	</div>
+ </li>`;
+
+}).join('');
 
 
 // попапп с подроным описанием фильма
-const createNewPopuppTemplate = (card) => {
-  const { filmInfo, userDetails} = card;
-  const vDate = humanizeTaskDueDate(filmInfo.release.date);
+const createNewPopuppTemplate = (state) => {
+  const { filmInfo, userDetails, comments, emotion, isChecked} = state;
+  const DATE_FORMAT = 'D MMMM YYYY';
+  const vDate = humanizeTaskDueDate(filmInfo.release.date, DATE_FORMAT);
+  const commentRender = createCommentTempalte(comments);
+  const emoChange = emotion ? createEmotionTemplate(emotion) : '';
   return(
     `<section class="film-details">
 <div class="film-details__inner">
@@ -75,21 +104,23 @@ const createNewPopuppTemplate = (card) => {
 	 </div>
 
 	 <section class="film-details__controls">
-		<button type="button" class="film-details__control-button film-details__control-button--${activateButton(userDetails.watchlist)} film-details__control-button--watchlist" id="watchlist" name="watchlist" data-details-button-type=${SortMode.DEFAULT}>Add to watchlist</button>
-		<button type="button" class="film-details__control-button film-details__control-button--${activateButton(userDetails.alreadyWatched)}" id="watched" name="watched" data-details-button-type=${FILMS_BUTTON_TYPE.alreadyWatched}>Already watched</button>
-		<button type="button" class="film-details__control-button film-details__control-button--${activateButton(userDetails.favorite)}" id="favorite" name="favorite" data-details-button-type=${FILMS_BUTTON_TYPE.favorite}>Add to favorites</button>
+		<button type="button" class="film-details__control-button film-details__control-button--${activateButton(userDetails.watchlist)} film-details__control-button--watchlist" id="watchlist" name="watchlist" data-details-button-type=${FILMS_BUTTON_TYPE.WATCHLIST}>Add to watchlist</button>
+		<button type="button" class="film-details__control-button film-details__control-button--${activateButton(userDetails.alreadyWatched)} film-details__control-button--watched" id="watched" name="watched" data-details-button-type=${FILMS_BUTTON_TYPE.ALREADY_WATCHED}>Already watched</button>
+		<button type="button" class="film-details__control-button film-details__control-button--${activateButton(userDetails.favorite)} film-details__control-button--favorite" id="favorite" name="favorite" data-details-button-type=${FILMS_BUTTON_TYPE.FAVORITE}>Add to favorites</button>
 	 </section>
   </div>
 
   <div class="film-details__bottom-container">
 	 <section class="film-details__comments-wrap">
-		<h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">0</span></h3>
+		<h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
-		<ul class="film-details__comments-list"></ul>
+		<ul class="film-details__comments-list">
+		${commentRender}
+		</ul>
 
 		<form class="film-details__new-comment" action="" method="get">
 		  <div class="film-details__add-emoji-label">
-			 <img src="images/emoji/smile.png" width="55" height="55" alt="emoji-smile">
+	${emoChange}
 		  </div>
 
 		  <label class="film-details__comment-label">
@@ -97,22 +128,22 @@ const createNewPopuppTemplate = (card) => {
 		  </label>
 
 		  <div class="film-details__emoji-list">
-			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" checked="">
+			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" checked="${emotion === EMOTION.SMILE ? isChecked : ''}">
 			 <label class="film-details__emoji-label" for="emoji-smile">
 				<img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
 			 </label>
 
-			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
+			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping" checked="${emotion === EMOTION.SLEEPING ? isChecked : ''}">
 			 <label class="film-details__emoji-label" for="emoji-sleeping">
 				<img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
 			 </label>
 
-			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
+			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke" checked="${emotion === EMOTION.PUKE ? isChecked : ''}">
 			 <label class="film-details__emoji-label" for="emoji-puke">
 				<img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
 			 </label>
 
-			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
+			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry" checked="${emotion === EMOTION.ANGRY ? isChecked : ''}" >
 			 <label class="film-details__emoji-label" for="emoji-angry">
 				<img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
 			 </label>
@@ -124,7 +155,7 @@ const createNewPopuppTemplate = (card) => {
 </section>`
   );
 };
-export default class NewPopuppView extends AbstractView {
+export default class NewPopuppView extends AbstractStatefulView {
   #card = null;
   #btnClosedClick = null;
   #changeWatchlist = null;
@@ -133,12 +164,41 @@ export default class NewPopuppView extends AbstractView {
 
   constructor ({card, onBtnClick, changeWatchlist, changeFavorite, changeAlredyWatched}) {
     super();
-    this.#card = card;
+    this._setState({...card, emotion:'', isChecked:'checked', scrollPosition:''});
     this.#btnClosedClick = onBtnClick;
     this.#changeWatchlist = changeWatchlist;
     this.#changeFavorite = changeFavorite;
     this.#changeAlredyWatched = changeAlredyWatched;
 
+    this._restoreHandlers();
+
+
+  }
+
+  get template() {
+    return createNewPopuppTemplate(this._state);
+  }
+
+  #btnClosedClickHendler = (evt) => {
+    evt.preventDefault();
+    this.#btnClosedClick();
+
+  };
+
+  saveScroll () {
+    this.element.scrollTo(START_VALUE, this._state.scrollPosition);
+  }
+
+  emotionChangeHendler = (evt) => {
+    if (evt.target.matches('input')) {
+      this.updateElement({...this._state, emotion: evt.target.value} );
+      this.saveScroll();
+    }
+  };
+
+
+  _restoreHandlers() {
+    this.element.querySelector('.film-details__new-comment').addEventListener('click', this.emotionChangeHendler);
 
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#btnClosedClickHendler);
 
@@ -148,32 +208,25 @@ export default class NewPopuppView extends AbstractView {
       }
     });
 
-
+    this.element.addEventListener('scroll', () => {
+      this._setState({scrollPosition: this.element.scrollTop});
+    });
   }
-
-  get template() {
-    return createNewPopuppTemplate(this.#card);
-  }
-
-  #btnClosedClickHendler = (evt) => {
-    evt.preventDefault();
-    this.#btnClosedClick();
-
-  };
 
 
   #changeDataClickHendler = (evt) => {
     evt.preventDefault();
     switch (evt.target.dataset.detailsButtonType) {
-      case FILMS_BUTTON_TYPE.alreadyWatched :
-        this.#changeAlredyWatched(this.#card);
+      case FILMS_BUTTON_TYPE.ALREADY_WATCHED :
+        this.#changeAlredyWatched(this._state);
         break;
-      case FILMS_BUTTON_TYPE.favorite :
-        this.#changeFavorite(this.#card);
+      case FILMS_BUTTON_TYPE.FAVORITE :
+        this.#changeFavorite(this._state);
         break;
-      case SortMode.DEFAULT :
-        this.#changeWatchlist(this.#card);
+      case FILMS_BUTTON_TYPE.WATCHLIST :
+        this.#changeWatchlist(this._state);
         break;
     }
   };
+
 }
