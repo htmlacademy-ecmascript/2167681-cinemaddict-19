@@ -28,6 +28,14 @@ const EMOTION = {
   ANGRY	:'angry'
 };
 
+const DATE_FORMATS = {
+  RELEASE:'D MMMM YYYY',
+  DURATION_M: ' mm[m]',
+  DURATION_H_M: 'H[h] mm[m]',
+  COMMENT: 'D MMMM YYYY H:MM',
+};
+
+
 const START_VALUE = 0;
 
 export {
@@ -36,5 +44,6 @@ export {
   FILMS_BUTTON_TYPE,
   SortMode,
   EMOTION,
-  START_VALUE
+  START_VALUE,
+  DATE_FORMATS
 };
