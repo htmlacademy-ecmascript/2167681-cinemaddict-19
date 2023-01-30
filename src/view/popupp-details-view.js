@@ -1,7 +1,7 @@
 import { humanizeTaskDueDate } from '../utils/common.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {activateButton} from '../utils/common.js';
-import {FILMS_BUTTON_TYPE, START_VALUE, EMOTION, DATE_FORMATS} from '../const.js';
+import {FILMS_BUTTON_TYPE, START_VALUE, EMOTION, DATE_FORMATS, COMPARE_VALUE_FOR_FILM_DURATION} from '../const.js';
 
 
 const createEmotionTemplate = (emotion) =>
@@ -32,7 +32,7 @@ const createCommentTempalte = (comments) => comments.map((one) =>{
 // попапп с подроным описанием фильма
 const createNewPopuppTemplate = (state) => {
   const { filmInfo, userDetails, comments, emotion} = state;
-  const durationTime = humanizeTaskDueDate(filmInfo.duration, filmInfo.duration > '0 1 0' ? DATE_FORMATS.DURATION_H_M : DATE_FORMATS.DURATION_M);
+  const durationTime = humanizeTaskDueDate(filmInfo.duration, filmInfo.duration > COMPARE_VALUE_FOR_FILM_DURATION ? DATE_FORMATS.DURATION_H_M : DATE_FORMATS.DURATION_M);
   const releaseDate = humanizeTaskDueDate(filmInfo.release.date, DATE_FORMATS.RELEASE);
 
   const commentRender = createCommentTempalte(comments);
