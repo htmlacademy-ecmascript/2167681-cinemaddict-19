@@ -1,13 +1,13 @@
 import { humanizeTaskDueDate } from '../utils/common.js';
 import AbstractView from '../framework/view/abstract-view.js';
 import {activateButton} from '../utils/common.js';
-import {FILMS_BUTTON_TYPE, DATE_FORMATS} from '../const.js';
+import {FILMS_BUTTON_TYPE, DATE_FORMATS, COMPARE_VALUE_FOR_FILM_DURATION} from '../const.js';
 
 
 // карточка с фильмом
 const createNewCardFilmTemplate = (card) => {
   const { comments, filmInfo, userDetails} = card;
-  const durationTime = humanizeTaskDueDate(filmInfo.duration, filmInfo.duration > '0 1 0' ? DATE_FORMATS.DURATION_H_M : DATE_FORMATS.DURATION_M);
+  const durationTime = humanizeTaskDueDate(filmInfo.duration, filmInfo.duration < COMPARE_VALUE_FOR_FILM_DURATION ? DATE_FORMATS.DURATION_M : DATE_FORMATS.DURATION_H_M);
   const vDate = humanizeTaskDueDate(filmInfo.date);
   return(
     `<article class="film-card">
