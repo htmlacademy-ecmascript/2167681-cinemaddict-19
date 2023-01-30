@@ -7,7 +7,7 @@ import {FILMS_BUTTON_TYPE, DATE_FORMATS} from '../const.js';
 // карточка с фильмом
 const createNewCardFilmTemplate = (card) => {
   const { comments, filmInfo, userDetails} = card;
-  const durationTime = humanizeTaskDueDate(filmInfo.duration, filmInfo.duration > '0 1 0' ? DATE_FORMATS.DURATION_H_M : DATE_FORMATS.DURATION_M);
+  const durationTime = humanizeTaskDueDate(filmInfo.duration, filmInfo.duration < '0 1 0' ? DATE_FORMATS.DURATION_M : DATE_FORMATS.DURATION_H_M);
   const vDate = humanizeTaskDueDate(filmInfo.date);
   return(
     `<article class="film-card">
