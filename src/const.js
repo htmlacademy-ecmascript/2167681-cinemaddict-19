@@ -21,10 +21,29 @@ const SortMode = {
   BY_RATING: 'by-rating',
 };
 
+const EMOTION = {
+  SMILE	:'smile',
+  SLEEPING	:'sleeping',
+  PUKE	:'puke',
+  ANGRY	:'angry'
+};
+
+const DATE_FORMATS = {
+  RELEASE:'D MMMM YYYY',
+  DURATION_M: ' mm[m]',
+  DURATION_H_M: 'H[h] mm[m]',
+  COMMENT: 'D MMMM YYYY H:MM',
+};
+
+
+const START_VALUE = 0;
 
 export {
   FilterType,
   ACTIVATE_MODE,
   FILMS_BUTTON_TYPE,
   SortMode,
+  EMOTION,
+  START_VALUE,
+  DATE_FORMATS
 };

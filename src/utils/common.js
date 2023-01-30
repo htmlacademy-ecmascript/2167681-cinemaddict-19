@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import {ACTIVATE_MODE} from '../const.js';
 
-const DATE_FORMAT = 'D MMMM YYYY';
+//const DATE_FORMAT = 'D MMMM YYYY H:MM';
 
 // функция генерации случайного числа из заданного диапазонв
 function getRandomIntInclusive(min, max) {
@@ -12,7 +12,7 @@ function getRandomIntInclusive(min, max) {
 }
 
 //функция изменения отображения даты
-const humanizeTaskDueDate = (dueDate) => dueDate ? dayjs(dueDate).format(DATE_FORMAT) : '';
+const humanizeTaskDueDate = (dueDate, dateFormat) => dueDate ? dayjs(dueDate).format(dateFormat) : '';
 //функция отображени даты
 const getDate = (date) => new Date (date);
 //функция отображения текущей даты

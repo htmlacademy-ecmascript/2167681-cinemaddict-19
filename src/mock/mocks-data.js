@@ -10,7 +10,7 @@ const FILM_NAME = ['Made for Each Other', 'Popeye meets Sindbad', 'Sagebrush Tra
 
 const COMMENTS_AMOUNT = 5;
 
-const DURATION = ['1h 52m', '50m', '2h 16m', '5h 32m', '2h 20m'];
+const DURATION = ['0 1:45', '0 2:10', '0 1:20', '0 6:40', '0 4:20', '0 0:40'];
 
 const DATE = ['2001.12.21', '1993.11.8', '2014.4.7', '1900.5.12', '1979.2.1', '1988.2.5', '1945.1.1', '2007.8.12'];
 
