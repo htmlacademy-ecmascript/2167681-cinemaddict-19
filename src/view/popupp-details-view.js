@@ -128,22 +128,22 @@ const createNewPopuppTemplate = (state) => {
 		  </label>
 
 		  <div class="film-details__emoji-list">
-			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" checked="${emotion === EMOTION.SMILE ? isChecked : ''}">
+			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" ${emotion === EMOTION.SMILE ? isChecked : ''}>
 			 <label class="film-details__emoji-label" for="emoji-smile">
 				<img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
 			 </label>
 
-			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping" checked="${emotion === EMOTION.SLEEPING ? isChecked : ''}">
+			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping" ${emotion === EMOTION.SLEEPING ? isChecked : ''}>
 			 <label class="film-details__emoji-label" for="emoji-sleeping">
 				<img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
 			 </label>
 
-			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke" checked="${emotion === EMOTION.PUKE ? isChecked : ''}">
+			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke" ${emotion === EMOTION.PUKE ? isChecked : ''}>
 			 <label class="film-details__emoji-label" for="emoji-puke">
 				<img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
 			 </label>
 
-			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry" checked="${emotion === EMOTION.ANGRY ? isChecked : ''}" >
+			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry" ${emotion === EMOTION.ANGRY ? isChecked : ''}>
 			 <label class="film-details__emoji-label" for="emoji-angry">
 				<img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
 			 </label>
