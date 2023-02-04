@@ -1,5 +1,5 @@
-import {render, RenderPosition} from '../framework/render.js';
-import {updateItem, sortRating, sortDate} from '../utils/common.js';
+import {render, RenderPosition, remove,} from '../framework/render.js';
+import { sortRating, sortDate} from '../utils/common.js';
 import NewFilmsMainContainerView from '../view/films-main-container-view.js';
 import NewMainContainersComponentView from '../view/main-containers-component-view.js';
 import NewCardsFilmContainerView from '../view/cards-film-container-view.js';
@@ -7,7 +7,8 @@ import NewFilterTitleView from '../view/filter-title-view.js';
 import FilmsCardPresenter from './films-card-presenter.js';
 import FilmsPopupPresenter from './films-popup-presenter.js';
 import NewSortsFilmView from '../view/sort-view.js';
-import {SortMode} from '../const.js';
+import {FilterType, SortMode, UpdateType, UserAction} from '../const.js';
+import {filter} from '../utils/filters.js';
 
 const FILMS_COUNT_PER_STEP = 5;
 
@@ -15,7 +16,7 @@ export default class ContentPresenter {
   #filmsMainContainer = new NewFilmsMainContainerView();
   #mainContainersComponent = new NewMainContainersComponentView();
   #cardsContainer = new NewCardsFilmContainerView();
-  #filterTitleView = new NewFilterTitleView();
+  #filterTitleView = null;
   #filmContainer;
   #filmInfoModel;
   #mainBody = null;
@@ -26,37 +27,63 @@ export default class ContentPresenter {
   #filmCardPresenters = new Map();
   #currentSortType = SortMode.DEFAULT;
   #sortComponent = null;
-  #sourcedFilmCard = [];
+  #filterFilmModel = null;
 
 
-  constructor({filmContainer, filmInfoModel, mainBody}) {
+  constructor({filmContainer, filmInfoModel, mainBody, filterFilmModel}) {
     this.#filmContainer = filmContainer;
     this.#filmInfoModel = filmInfoModel;
     this.#mainBody = mainBody;
+    this.#filterFilmModel = filterFilmModel;
+
+    this.#filmInfoModel.addObserver(this.#handleModeEvent);
+    this.#filterFilmModel.addObserver(this.#handleModeEvent);
   }
+
+
+  get films () {
+    const filterType = this.#filterFilmModel.filter;
+    const films = this.#filmInfoModel.getCards();
+    const filteredFilms = filter[filterType](films);
+
+    switch(this.#currentSortType) {
+      case SortMode.BY_DATE:
+        return filteredFilms.sort(sortDate);
+
+      case SortMode.BY_RATING:
+        return filteredFilms.sort(sortRating);
+    }
+    return filteredFilms;
+  }
+
 
   init() {
-    this.#cardFilms = [...this.#filmInfoModel.cards];
     this.#renderMainContainer();
-    this.#sourcedFilmCard = [...this.#filmInfoModel.cards];
   }
 
+  //отрисовка главного контайнера
+  #renderMainContainer() {
+    this.#renderSort();
+    render(this.#filmsMainContainer, this.#filmContainer);
+    render(this.#mainContainersComponent, this.#filmsMainContainer.element);
+    render(this.#cardsContainer, this.#mainContainersComponent.element);
+    this.#renderFilterTitleView();
 
-  #connectFilmsPopupPresenter = (card) => {
+    const filmsCount = this.films.length;
+    const films = this.films.slice(0, Math.min(filmsCount, FILMS_COUNT_PER_STEP));
 
-    if(this.#filmsPopupPresenter) {
-      this.#filmsPopupPresenter.destroy();
+    if (filmsCount === 0) {
+      this.#filterTitleView.element.classList.remove('visually-hidden');
+
+    } else {
+      this.#filterTitleView.element.classList.add('visually-hidden');
+      this.#renderCardsFilms(films);
     }
 
-    this.#filmsPopupPresenter = new FilmsPopupPresenter({
-      mainBody: this.#mainBody,
-      changeWatchlist: this.#changeWatchlist,
-      changeFavorite: this.#changeFavorite,
-      changeAlredyWatched: this.#changeAlredyWatched,
-    });
-    this.#filmsPopupPresenter.init(card);
-  };
-
+    if (filmsCount > FILMS_COUNT_PER_STEP) {
+      this.#filmCardPresenter.renderShowMoreButton();
+    }
+  }
 
   #connectFilmCardsPresenter() {
 
@@ -72,135 +99,178 @@ export default class ContentPresenter {
     });
   }
 
-  //функция кнопки 'show more'
-  #loadMoreButtonClickHandler = () => {
-    this.#cardFilms
-      .slice(this.#arrayFilmsCount, this.#arrayFilmsCount + FILMS_COUNT_PER_STEP)
-      .forEach((card) => this.#renderCard(card));
+  #renderFilterTitleView = () => {
 
-    this.#arrayFilmsCount += FILMS_COUNT_PER_STEP;
 
-    if (this.#arrayFilmsCount >= this.#cardFilms.length) {
-      this.#mainContainersComponent.element.querySelector('.films-list__show-more')
-        .classList.add('visually-hidden');
-    }
-  };
-
-  #renderEmptyTittle () {
-    this.#filterTitleView.element.textContent = 'There are no movies in our database';
-    this.#mainContainersComponent.element.querySelector('.films-list__title').classList.remove('visually-hidden');
-  }
-
-  //отрисовка главного контайнера
-  #renderMainContainer() {
-    this.#renderSort();
-    render(this.#filmsMainContainer, this.#filmContainer);
-    render(this.#mainContainersComponent, this.#filmsMainContainer.element);
-    render(this.#cardsContainer, this.#mainContainersComponent.element);
+    this.#filterTitleView = new NewFilterTitleView({
+      currentFilter: this.#filterFilmModel.filter
+    });
     render(this.#filterTitleView, this.#mainContainersComponent.element, RenderPosition.AFTERBEGIN);
 
+  };
 
-    this.#renderFilms();
-  }
+  #connectFilmsPopupPresenter = (card) => {
 
-  clearFilmList() {
-    this.#filmCardPresenters.forEach((presenter) => {
-      presenter.destroy();
+    if(this.#filmsPopupPresenter) {
+      this.#filmsPopupPresenter.destroy();
+    }
+
+    this.#filmsPopupPresenter = new FilmsPopupPresenter({
+      mainBody: this.#mainBody,
+      changeWatchlist: this.#changeWatchlist,
+      changeFavorite: this.#changeFavorite,
+      changeAlredyWatched: this.#changeAlredyWatched,
+      changeCommentsList: this.#changeCommentsList,
+
     });
-    this.#filmCardPresenters.clear();
-    this.#arrayFilmsCount = FILMS_COUNT_PER_STEP;
-
-  }
-
-  #renderCards(from, to) {
-    this.#cardFilms
-      .slice(from, to)
-      .forEach((card) => this.#renderCard(card));
-  }
-
-  // отрисовка фильмов по умолчанию
-  #renderFilms = () => {
-    if (this.#cardFilms.length === 0) {
-      this.#renderEmptyTittle();
-    } else {
-      this.#renderCards(0, Math.min(this.#cardFilms.length, FILMS_COUNT_PER_STEP));
-    }
-
-    if (this.#cardFilms.length > FILMS_COUNT_PER_STEP) {
-      this.#filmCardPresenter.renderShowMoreButton();
-    }
-
-  };
-
-
-  //сортировка фильмов
-  #sortFilmCards = (sortMode) => {
-
-    switch(sortMode) {
-      case SortMode.BY_DATE:
-        this.#cardFilms.sort(sortDate);
-        break;
-
-      case SortMode.BY_RATING:
-        this.#cardFilms.sort(sortRating);
-        break;
-
-      case SortMode.DEFAULT:
-        this.#cardFilms = [...this.#sourcedFilmCard];
-        break;
-    }
-
-    this.#currentSortType = sortMode;
-  };
-
-
-  #handleSortTypeChange = (sortMode) => {
-    if(this.#currentSortType === sortMode) {
-      return;
-    }
-
-    this.#sortFilmCards(sortMode);
-    this.clearFilmList();
-    this.#renderFilms();
-
+    this.#filmsPopupPresenter.init(card);
   };
 
   #renderSort = () => {
-
     this.#sortComponent = new NewSortsFilmView({
-      onSortTypeChange: this.#handleSortTypeChange
+      onSortTypeChange: this.#handleSortTypeChange,
+      currentSortType: this.#currentSortType
     });
 
     render(this.#sortComponent, this.#filmContainer);
   };
 
+  //функция кнопки 'show more'
+  #loadMoreButtonClickHandler = () => {
+    const filmsCount = this.films.length;
+    const renderCount = Math.min(filmsCount, this.#arrayFilmsCount + FILMS_COUNT_PER_STEP);
+    const films = this.films.slice(this.#arrayFilmsCount, renderCount);
+
+    this.#renderCardsFilms(films);
+
+    this.#arrayFilmsCount = renderCount;
+
+    if (this.#arrayFilmsCount >= filmsCount) {
+      this.#mainContainersComponent.element.querySelector('.films-list__show-more')
+        .classList.add('visually-hidden');
+    }
+  };
+
+
+  #renderCardsFilms = (cards) => cards.forEach((card) => this.#renderCardFilm(card));
+
+  //очистка списка фильмов
+  #clearBoard({resetRenderFilmsCount = false, resetSortType = false} = {}) {
+    const taskCount = this.films.length;
+
+    this.#filmCardPresenters.forEach((presenter) => presenter.destroy());
+    this.#filmCardPresenters.clear();
+
+    remove(this.#filmsMainContainer);
+    remove(this.#sortComponent);
+    remove(this.#filterTitleView);
+
+    if (resetRenderFilmsCount) {
+      this.#arrayFilmsCount = FILMS_COUNT_PER_STEP;
+    } else {
+      this.#arrayFilmsCount = Math.min(taskCount, this.#arrayFilmsCount);
+    }
+
+    if (resetSortType) {
+      this.#currentSortType = SortMode.DEFAULT;
+    }
+  }
+
+  // переключение сортировки
+  #handleSortTypeChange = (sortMode) => {
+    if(this.#currentSortType === sortMode) {
+      return;
+    }
+
+    this.#currentSortType = sortMode;
+    this.#clearBoard({resetRenderFilmsCount: true});
+    this.#renderMainContainer();
+
+  };
+
+
   // функция отрисовки карточек
-  #renderCard(cards) {
+  #renderCardFilm(cards) {
     this.#connectFilmCardsPresenter();
     this.#filmCardPresenter.init(cards);
     this.#filmCardPresenters.set(cards.id, this.#filmCardPresenter);
   }
 
-  // функция изменения данных во вью
-  #handleFilmChange = (updateFilm) => {
-    this.#cardFilms = updateItem(this.#cardFilms, updateFilm);
-    this.#filmCardPresenters.get(updateFilm.id).init(updateFilm);
-    if (this.#filmsPopupPresenter) {
-      this.#filmsPopupPresenter.init(updateFilm);
+
+  #handleModeEvent = (updateType, data) => {
+    switch(updateType) {
+      case UpdateType.BLOB:
+        this.#filmCardPresenters.get(data.id).init(data);
+        break;
+      case UpdateType.PATCH:
+        this.#filmCardPresenters.get(data.id).init(data);
+        if (this.#filmsPopupPresenter) {
+          this.#filmsPopupPresenter.init(data);
+        }
+        break;
+      case UpdateType.MINOR:
+        this.#clearBoard();
+        this.#renderMainContainer();
+        break;
+      case UpdateType.MAJOR:
+        this.#clearBoard({resetRenderFilmsCount: true, resetSortType: true});
+        this.#renderMainContainer();
+        break;
     }
+  };
+
+  #handleViewAction = (actionType, updateType, update) => {
+    switch(actionType) {
+      case UserAction.UPDATE_FILM:
+        this.#filmInfoModel.updateFilm(updateType,update);
+        break;
+      case UserAction.CHANGE_COMMENT_LIST:
+        this.#filmInfoModel.updateFilm(updateType,update);
+        break;
+
+    }
+
 
   };
 
+
   //функции для изменение данных в моделях
+  #changeCommentsList = (data) => {
+    this.#handleViewAction(
+      UserAction.CHANGE_COMMENT_LIST,
+      UpdateType.BLOB,
+      {...data,comments: data.comments});
+
+  };
+
+
   #changeWatchlist = (data) => {
-    this.#handleFilmChange({...data,userDetails:{...data.userDetails, watchlist: !data.userDetails.watchlist}});
+    const filterType = this.#filterFilmModel.filter;
+    const currentUpdateType = filterType === FilterType.ALL ? UpdateType.PATCH : UpdateType.MINOR;
+
+    this.#handleViewAction(
+      UserAction.UPDATE_FILM,
+      currentUpdateType,
+      {...data,userDetails:{...data.userDetails, watchlist: !data.userDetails.watchlist}});
   };
 
   #changeFavorite = (data) => {
-    this.#handleFilmChange({...data,userDetails:{...data.userDetails, favorite: !data.userDetails.favorite}});
+    const filterType = this.#filterFilmModel.filter;
+    const currentUpdateType = filterType === FilterType.ALL ? UpdateType.PATCH : UpdateType.MINOR;
+
+    this.#handleViewAction(
+      UserAction.UPDATE_FILM,
+      currentUpdateType,
+      {...data,userDetails:{...data.userDetails, favorite: !data.userDetails.favorite}});
   };
 
   #changeAlredyWatched = (data) => {
-    this.#handleFilmChange({...data,userDetails:{...data.userDetails, alreadyWatched: !data.userDetails.alreadyWatched}});
+    const filterType = this.#filterFilmModel.filter;
+    const currentUpdateType = filterType === FilterType.ALL ? UpdateType.PATCH : UpdateType.MINOR;
+
+    this.#handleViewAction(
+      UserAction.UPDATE_FILM,
+      currentUpdateType,
+      {...data,userDetails:{...data.userDetails, alreadyWatched: !data.userDetails.alreadyWatched}});
   };
 }

@@ -1,13 +1,37 @@
 import AbstractView from '../framework/view/abstract-view.js';
+import { FilterType } from '../const.js';
 
-// контейнер для карточек с фильмом (вкладывается в main-containers-componets-view.js )
-const createFilterTitleViewTemplate = () =>
-  '<h2 class="films-list__title visually-hidden"></h2>';
+const createFilterTitleViewTemplate = (header) =>
+  `<h2 class="films-list__title ">${header}</h2>`;
 
 
 export default class NewFilterTitleView extends AbstractView {
 
-  get template() {
-    return createFilterTitleViewTemplate;
+  #currentFilter = null;
+
+  constructor ({currentFilter}) {
+    super();
+    this.#currentFilter = currentFilter;
+
   }
+
+  get template() {
+    return createFilterTitleViewTemplate(this.#changeHeader());
+  }
+
+
+  #changeHeader = () => {
+
+    switch(this.#currentFilter) {
+      case FilterType.ALL:
+        return 'There are no movies in our database';
+      case FilterType.FAVORITES:
+        return 'Your favorites is empty';
+      case FilterType.WATCHLIST:
+        return 'Your watchlist is empty';
+      case FilterType.HISTORY:
+        return 'Your history is empty';
+    }
+
+  };
 }

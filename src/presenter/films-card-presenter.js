@@ -78,4 +78,5 @@ export default class FilmsCardPresenter {
     render(this.#loadMoreButtonComponent, this.#mainContainersComponent);
   }
 
+
 }

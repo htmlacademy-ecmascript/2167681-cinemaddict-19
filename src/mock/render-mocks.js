@@ -45,14 +45,17 @@ const createFilmInfo = () => ({
   }
 });
 //структура комментария
-const createComment = () => ({
+const createComment = (text, emotion) => ({
   id: createCommentId(),
   author: getRandomIntInclusiveArrayElement(NAMES) ,
-  comment:getRandomIntInclusiveArrayElement(DESCRIPTIONS) ,
+  comment: text ? text : getRandomIntInclusiveArrayElement(DESCRIPTIONS),
   date: nowDate(),
-  emotion: getRandomIntInclusiveArrayElement(EMOTION)
+  emotion: emotion ? emotion : getRandomIntInclusiveArrayElement(EMOTION)
 });
 
+const x = createComment;
+const array = [];
+array.push(x('Очень классный фильм'));
 
 // массив комментов
 const generateArrayFilmsInfo = (amount) => {
@@ -79,5 +82,5 @@ function generateArrayComments () {
 export {
   generateArrayFilmsInfo,
   createFilmInfo,
-
+  createComment
 };

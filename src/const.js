@@ -1,7 +1,8 @@
 const FilterType = {
+  ALL: 'All movies',
   WATCHLIST: 'Watchlist',
   HISTORY: 'History',
-  FAVORITE: 'Favorites',
+  FAVORITES: 'Favorites',
 };
 
 const ACTIVATE_MODE = {
@@ -12,7 +13,7 @@ const ACTIVATE_MODE = {
 const FILMS_BUTTON_TYPE = {
   WATCHLIST: 'watchlist',
   ALREADY_WATCHED: 'already-watched',
-  FAVORITE: 'favorite',
+  FAVORITE: 'favorites',
 };
 
 const SortMode = {
@@ -21,7 +22,7 @@ const SortMode = {
   BY_RATING: 'by-rating',
 };
 
-const EMOTION = {
+const Emotion = {
   SMILE	:'smile',
   SLEEPING	:'sleeping',
   PUKE	:'puke',
@@ -39,13 +40,27 @@ const COMPARE_VALUE_FOR_FILM_DURATION = '0 1 0';
 
 const START_VALUE = 0;
 
+const UserAction = {
+  UPDATE_FILM: 'update-film',
+  CHANGE_COMMENT_LIST: 'change-comment-list',
+};
+
+const UpdateType = {
+  BLOB: 'BLOB',
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
 export {
   FilterType,
   ACTIVATE_MODE,
   FILMS_BUTTON_TYPE,
   SortMode,
-  EMOTION,
+  Emotion,
   START_VALUE,
   DATE_FORMATS,
-  COMPARE_VALUE_FOR_FILM_DURATION
+  COMPARE_VALUE_FOR_FILM_DURATION,
+  UpdateType,
+  UserAction
 };

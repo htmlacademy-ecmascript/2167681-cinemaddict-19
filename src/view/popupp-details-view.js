@@ -1,17 +1,17 @@
 import { humanizeTaskDueDate } from '../utils/common.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import {activateButton} from '../utils/common.js';
-import {FILMS_BUTTON_TYPE, START_VALUE, EMOTION, DATE_FORMATS, COMPARE_VALUE_FOR_FILM_DURATION} from '../const.js';
+import {FILMS_BUTTON_TYPE, START_VALUE, Emotion, DATE_FORMATS, COMPARE_VALUE_FOR_FILM_DURATION} from '../const.js';
+import { createComment } from '../mock/render-mocks.js';
 
-
+// отрисовка выбранной эмоции
 const createEmotionTemplate = (emotion) =>
   `<img src="images/emoji/${emotion}.png" width="55" height="55" alt="emoji-smile">`;
 
 
+// отрисовка комментариев
 const createCommentTempalte = (comments) => comments.map((one) =>{
-  const { author, comment, date, emotion} = one;
+  const { author, comment, date, emotion, id} = one;
   const commentDate = humanizeTaskDueDate(date, DATE_FORMATS.COMMENT);
-
   return `<li class="film-details__comment">
 	<span class="film-details__comment-emoji">
 	  <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-smile">
@@ -21,19 +21,19 @@ const createCommentTempalte = (comments) => comments.map((one) =>{
 	  <p class="film-details__comment-info">
 		 <span class="film-details__comment-author">${author}</span>
 		 <span class="film-details__comment-day">${commentDate}</span>
-		 <button class="film-details__comment-delete">Delete</button>
+		 <button class="film-details__comment-delete" data-id-type = "${id}" >Delete</button>
 	  </p>
 	</div>
  </li>`;
 
 }).join('');
 
-
 // попапп с подроным описанием фильма
 const createNewPopuppTemplate = (state) => {
-  const { filmInfo, userDetails, comments, emotion} = state;
+  const { filmInfo, userDetails, comments, emotion, comment} = state;
   const durationTime = humanizeTaskDueDate(filmInfo.duration, filmInfo.duration > COMPARE_VALUE_FOR_FILM_DURATION ? DATE_FORMATS.DURATION_H_M : DATE_FORMATS.DURATION_M);
   const releaseDate = humanizeTaskDueDate(filmInfo.release.date, DATE_FORMATS.RELEASE);
+
 
   const commentRender = createCommentTempalte(comments);
   const emoChange = emotion ? createEmotionTemplate(emotion) : '';
@@ -102,11 +102,10 @@ const createNewPopuppTemplate = (state) => {
 		  </p>
 		</div>
 	 </div>
-
 	 <section class="film-details__controls">
-		<button type="button" class="film-details__control-button film-details__control-button--${activateButton(userDetails.watchlist)} film-details__control-button--watchlist" id="watchlist" name="watchlist" data-details-button-type=${FILMS_BUTTON_TYPE.WATCHLIST}>Add to watchlist</button>
-		<button type="button" class="film-details__control-button film-details__control-button--${activateButton(userDetails.alreadyWatched)} film-details__control-button--watched" id="watched" name="watched" data-details-button-type=${FILMS_BUTTON_TYPE.ALREADY_WATCHED}>Already watched</button>
-		<button type="button" class="film-details__control-button film-details__control-button--${activateButton(userDetails.favorite)} film-details__control-button--favorite" id="favorite" name="favorite" data-details-button-type=${FILMS_BUTTON_TYPE.FAVORITE}>Add to favorites</button>
+		<button type="button" class="film-details__control-button ${userDetails.watchlist ? 'film-details__control-button--active' : ''} film-details__control-button--watchlist" id="watchlist" name="watchlist" data-details-button-type=${FILMS_BUTTON_TYPE.WATCHLIST}>Add to watchlist</button>
+		<button type="button" class="film-details__control-button ${userDetails.alreadyWatched ? 'film-details__control-button--active' : ''} film-details__control-button--watched" id="watched" name="watched" data-details-button-type=${FILMS_BUTTON_TYPE.ALREADY_WATCHED}>Already watched</button>
+		<button type="button" class="film-details__control-button ${userDetails.favorite ? 'film-details__control-button--active' : ''} film-details__control-button--favorite" id="favorite" name="favorite" data-details-button-type=${FILMS_BUTTON_TYPE.FAVORITE}>Add to favorites</button>
 	 </section>
   </div>
 
@@ -124,26 +123,26 @@ const createNewPopuppTemplate = (state) => {
 		  </div>
 
 		  <label class="film-details__comment-label">
-			 <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">Great movie!</textarea>
+			 <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${comment}</textarea>
 		  </label>
 
 		  <div class="film-details__emoji-list">
-			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" ${emotion === EMOTION.SMILE ? 'checked' : ''}>
+			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" ${emotion === Emotion.SMILE ? 'checked' : ''}>
 			 <label class="film-details__emoji-label" for="emoji-smile">
 				<img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
 			 </label>
 
-			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping" ${emotion === EMOTION.SLEEPING ? 'checked' : ''}>
+			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping" ${emotion === Emotion.SLEEPING ? 'checked' : ''}>
 			 <label class="film-details__emoji-label" for="emoji-sleeping">
 				<img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
 			 </label>
 
-			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke" ${emotion === EMOTION.PUKE ? 'checked' : ''}>
+			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke" ${emotion === Emotion.PUKE ? 'checked' : ''}>
 			 <label class="film-details__emoji-label" for="emoji-puke">
 				<img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
 			 </label>
 
-			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry" ${emotion === EMOTION.ANGRY ? 'checked' : ''}>
+			 <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry" ${emotion === Emotion.ANGRY ? 'checked' : ''}>
 			 <label class="film-details__emoji-label" for="emoji-angry">
 				<img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
 			 </label>
@@ -160,32 +159,37 @@ export default class NewPopuppView extends AbstractStatefulView {
   #changeWatchlist = null;
   #changeFavorite = null;
   #changeAlredyWatched = null;
+  #changeCommentsList = null;
 
-  constructor ({card, onBtnClick, changeWatchlist, changeFavorite, changeAlredyWatched}) {
+  constructor ({card, onBtnClick, changeWatchlist, changeFavorite, changeAlredyWatched, changeCommentsList}) {
     super();
     this._setState(NewPopuppView.parseCardToState(card));
     this.#btnClosedClick = onBtnClick;
     this.#changeWatchlist = changeWatchlist;
     this.#changeFavorite = changeFavorite;
     this.#changeAlredyWatched = changeAlredyWatched;
-
+    this.#changeCommentsList = changeCommentsList;
     this._restoreHandlers();
 
 
   }
 
+  // парс из модельки
   static parseCardToState (card) {
     return { ...card,
       emotion:'',
-      scrollPosition:''
+      scrollPosition:'',
+      comment: '',
     };
   }
 
+  // парс в модельку
   static parseStateToCard (state) {
     const card = {...state};
 
     delete card.emotion;
     delete card.scrollPosition;
+    delete card.comment;
 
     return card;
   }
@@ -194,16 +198,20 @@ export default class NewPopuppView extends AbstractStatefulView {
     return createNewPopuppTemplate(this._state);
   }
 
+  // закрыть попап
   #btnClosedClickHendler = (evt) => {
     evt.preventDefault();
     this.#btnClosedClick();
 
   };
 
+
+  // сохранение скрола
   saveScroll () {
     this.element.scrollTo(START_VALUE, this._state.scrollPosition);
   }
 
+  // выбор эмоции
   emotionChangeHendler = (evt) => {
     if (evt.target.matches('input')) {
       this.updateElement({...this._state, emotion: evt.target.value});
@@ -211,7 +219,7 @@ export default class NewPopuppView extends AbstractStatefulView {
     }
   };
 
-
+  // обработчики событий
   _restoreHandlers() {
     this.element.querySelector('.film-details__new-comment').addEventListener('click', this.emotionChangeHendler);
 
@@ -223,12 +231,53 @@ export default class NewPopuppView extends AbstractStatefulView {
       }
     });
 
+    this.element.querySelector('.film-details__comment-input').addEventListener('keydown', this.#addComment);
     this.element.addEventListener('scroll', () => {
       this._setState({scrollPosition: this.element.scrollTop});
     });
+
+    this.element.querySelector('.film-details__comment-input').addEventListener('change', this.#saveComment);
+    this.element.querySelector('.film-details__comments-list').addEventListener('click', this.#deleteComment);
   }
 
+  //сохранение не отправленного комментария
+  #saveComment = (evt) => {
+    if (evt.target.matches('textarea')) {
+      this._setState({comment: evt.target.value});
+    }
+  };
 
+  // добавление комментария
+  #addComment = (evt) => {
+    const emotion = this._state.emotion;
+    const textarea = document.querySelector('.film-details__comment-input');
+    if(evt.ctrlKey && evt.keyCode === 13) {
+      this.updateElement(this._state.comments.push(createComment(textarea.value, emotion)));
+      textarea.value = '';
+      this.saveScroll();
+      this.#changeCommentsList(NewPopuppView.parseStateToCard(this._state));
+    }
+
+  };
+
+  // Удаление комментария
+  #deleteComment = (evt) => {
+    const datasetId = Number(evt.target.dataset.idType);
+    const index = this._state.comments.findIndex((comment) => comment.id === datasetId );
+
+
+    this._state.comments = [
+      ...this._state.comments.slice(0, index),
+      ...this._state.comments.slice(index + 1)
+    ];
+
+    this.updateElement({...this._state, comments: this._state.comments});
+    this.saveScroll();
+    this.#changeCommentsList(NewPopuppView.parseStateToCard(this._state));
+
+  };
+
+  //Изменение данный для фильтров
   #changeDataClickHendler = (evt) => {
     evt.preventDefault();
     switch (evt.target.dataset.detailsButtonType) {
