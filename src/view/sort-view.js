@@ -14,11 +14,13 @@ function createNewSortsFilmTemplate (currentSort){
 export default class NewSortsFilmView extends AbstractView {
 
   #sortChange = null;
-  #currentSort = 'default';
+  #currentSort = null;
 
-  constructor ({onSortTypeChange}) {
+  constructor ({onSortTypeChange, currentSortType}) {
     super();
     this.#sortChange = onSortTypeChange;
+    this.#currentSort = currentSortType;
+
 
     this.element.addEventListener('click', this.#sortTypeChangeHendler);
 

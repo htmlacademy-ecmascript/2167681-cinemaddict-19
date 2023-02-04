@@ -1,6 +1,5 @@
 import { humanizeTaskDueDate } from '../utils/common.js';
 import AbstractView from '../framework/view/abstract-view.js';
-import {activateButton} from '../utils/common.js';
 import {FILMS_BUTTON_TYPE, DATE_FORMATS, COMPARE_VALUE_FOR_FILM_DURATION} from '../const.js';
 
 
@@ -24,9 +23,9 @@ const createNewCardFilmTemplate = (card) => {
 	  <span class="film-card__comments">${comments.length} comments</span>
 	</a>
 	<div class="film-card__controls">
-	  <button class="film-card__controls-item film-card__controls-item--add-to-watchlist film-card__controls-item--${activateButton(userDetails.watchlist)}" type="button" data-button-type="${FILMS_BUTTON_TYPE.WATCHLIST}">Add to watchlist</button>
-	  <button class="film-card__controls-item film-card__controls-item--mark-as-watched film-card__controls-item--${activateButton(userDetails.alreadyWatched)}" type="button" data-button-type="${FILMS_BUTTON_TYPE.ALREADY_WATCHED}">Mark as watched</button>
-	  <button class="film-card__controls-item film-card__controls-item--favorite film-card__controls-item--${activateButton(userDetails.favorite)}" type="button" data-button-type="${FILMS_BUTTON_TYPE.FAVORITE}">Mark as favorite</button>
+	  <button class="film-card__controls-item film-card__controls-item--add-to-watchlist ${userDetails.watchlist ? 'film-card__controls-item--active' : ''}" type="button" data-button-type="${FILMS_BUTTON_TYPE.WATCHLIST}">Add to watchlist</button>
+	  <button class="film-card__controls-item film-card__controls-item--mark-as-watched ${userDetails.alreadyWatched ? 'film-card__controls-item--active' : ''}" type="button" data-button-type="${FILMS_BUTTON_TYPE.ALREADY_WATCHED}">Mark as watched</button>
+	  <button class="film-card__controls-item film-card__controls-item--favorite ${userDetails.favorite ? 'film-card__controls-item--active' : ''}" type="button" data-button-type="${FILMS_BUTTON_TYPE.FAVORITE}">Mark as favorite</button>
 	</div>
  </article>`
   );
@@ -70,7 +69,7 @@ export default class NewCardFilmView extends AbstractView {
     this.#openPopup();
   };
 
-
+  //ФУНКЦИИ ИЗМЕНЕНИЯ ДАННЫХ ПО КЛИКУ
   #changeDataClickHendler = (evt) => {
     evt.preventDefault();
     switch (evt.target.dataset.buttonType) {
