@@ -7,8 +7,10 @@ import NewFilterTitleView from '../view/filter-title-view.js';
 import FilmsCardPresenter from './films-card-presenter.js';
 import FilmsPopupPresenter from './films-popup-presenter.js';
 import NewSortsFilmView from '../view/sort-view.js';
+import LoadingView from '../view/loading-view.js';
 import {FilterType, SortMode, UpdateType, UserAction} from '../const.js';
 import {filter} from '../utils/filters.js';
+import NewUserRangView from '../view/user-rang-view.js';
 
 const FILMS_COUNT_PER_STEP = 5;
 
@@ -16,7 +18,10 @@ export default class ContentPresenter {
   #filmsMainContainer = new NewFilmsMainContainerView();
   #mainContainersComponent = new NewMainContainersComponentView();
   #cardsContainer = new NewCardsFilmContainerView();
+  #header = null;
   #filterTitleView = null;
+  #loadingComponent = new LoadingView();
+  #userRangView = null;
   #filmContainer;
   #filmInfoModel;
   #mainBody = null;
@@ -28,13 +33,17 @@ export default class ContentPresenter {
   #currentSortType = SortMode.DEFAULT;
   #sortComponent = null;
   #filterFilmModel = null;
+  #isLoading = true;
+  #filmsCommentsModel = null;
 
 
-  constructor({filmContainer, filmInfoModel, mainBody, filterFilmModel}) {
+  constructor({header, filmContainer, filmInfoModel, mainBody, filterFilmModel, filmsCommentsModel}) {
+    this.#header = header;
     this.#filmContainer = filmContainer;
     this.#filmInfoModel = filmInfoModel;
     this.#mainBody = mainBody;
     this.#filterFilmModel = filterFilmModel;
+    this.#filmsCommentsModel = filmsCommentsModel;
 
     this.#filmInfoModel.addObserver(this.#handleModeEvent);
     this.#filterFilmModel.addObserver(this.#handleModeEvent);
@@ -44,6 +53,7 @@ export default class ContentPresenter {
   get films () {
     const filterType = this.#filterFilmModel.filter;
     const films = this.#filmInfoModel.getCards();
+
     const filteredFilms = filter[filterType](films);
 
     switch(this.#currentSortType) {
@@ -63,11 +73,17 @@ export default class ContentPresenter {
 
   //отрисовка главного контайнера
   #renderMainContainer() {
+    this.#renderUserRang();
     this.#renderSort();
     render(this.#filmsMainContainer, this.#filmContainer);
     render(this.#mainContainersComponent, this.#filmsMainContainer.element);
     render(this.#cardsContainer, this.#mainContainersComponent.element);
     this.#renderFilterTitleView();
+
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
 
     const filmsCount = this.films.length;
     const films = this.films.slice(0, Math.min(filmsCount, FILMS_COUNT_PER_STEP));
@@ -96,6 +112,7 @@ export default class ContentPresenter {
       changeFavorite: this.#changeFavorite,
       changeAlredyWatched: this.#changeAlredyWatched,
       mainBody: this.#mainBody,
+      filmsCommentsModel: this.#filmsCommentsModel,
     });
   }
 
@@ -121,10 +138,19 @@ export default class ContentPresenter {
       changeFavorite: this.#changeFavorite,
       changeAlredyWatched: this.#changeAlredyWatched,
       changeCommentsList: this.#changeCommentsList,
+      filmsCommentsModel:this.#filmsCommentsModel,
 
     });
     this.#filmsPopupPresenter.init(card);
   };
+
+  #renderUserRang () {
+    this.#userRangView = new NewUserRangView({
+      filmModel: this.#filmInfoModel
+    });
+
+    render (this.#userRangView, this.#header,);
+  }
 
   #renderSort = () => {
     this.#sortComponent = new NewSortsFilmView({
@@ -161,9 +187,11 @@ export default class ContentPresenter {
     this.#filmCardPresenters.forEach((presenter) => presenter.destroy());
     this.#filmCardPresenters.clear();
 
+    remove(this.#userRangView);
     remove(this.#filmsMainContainer);
     remove(this.#sortComponent);
     remove(this.#filterTitleView);
+    remove(this.#loadingComponent);
 
     if (resetRenderFilmsCount) {
       this.#arrayFilmsCount = FILMS_COUNT_PER_STEP;
@@ -196,6 +224,10 @@ export default class ContentPresenter {
     this.#filmCardPresenters.set(cards.id, this.#filmCardPresenter);
   }
 
+  #renderLoading() {
+    render(this.#loadingComponent, this.#mainContainersComponent.element);
+  }
+
 
   #handleModeEvent = (updateType, data) => {
     switch(updateType) {
@@ -209,6 +241,9 @@ export default class ContentPresenter {
         }
         break;
       case UpdateType.MINOR:
+        if (this.#filmsPopupPresenter) {
+          this.#filmsPopupPresenter.init(data);
+        }
         this.#clearBoard();
         this.#renderMainContainer();
         break;
@@ -216,6 +251,11 @@ export default class ContentPresenter {
         this.#clearBoard({resetRenderFilmsCount: true, resetSortType: true});
         this.#renderMainContainer();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#clearBoard({resetRenderFilmsCount: true, resetSortType: true});
+        this.#renderMainContainer();
     }
   };
 
@@ -229,10 +269,7 @@ export default class ContentPresenter {
         break;
 
     }
-
-
   };
-
 
   //функции для изменение данных в моделях
   #changeCommentsList = (data) => {

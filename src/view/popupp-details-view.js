@@ -1,3 +1,4 @@
+//import he from 'he';
 import { humanizeTaskDueDate } from '../utils/common.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {FILMS_BUTTON_TYPE, START_VALUE, Emotion, DATE_FORMATS, COMPARE_VALUE_FOR_FILM_DURATION} from '../const.js';
@@ -30,12 +31,12 @@ const createCommentTempalte = (comments) => comments.map((one) =>{
 
 // попапп с подроным описанием фильма
 const createNewPopuppTemplate = (state) => {
-  const { filmInfo, userDetails, comments, emotion, comment} = state;
+  const { filmInfo, userDetails, comments, emotion, comment, commentsArray} = state;
   const durationTime = humanizeTaskDueDate(filmInfo.duration, filmInfo.duration > COMPARE_VALUE_FOR_FILM_DURATION ? DATE_FORMATS.DURATION_H_M : DATE_FORMATS.DURATION_M);
   const releaseDate = humanizeTaskDueDate(filmInfo.release.date, DATE_FORMATS.RELEASE);
 
 
-  const commentRender = createCommentTempalte(comments);
+  const commentRender = createCommentTempalte(commentsArray);
   const emoChange = emotion ? createEmotionTemplate(emotion) : '';
   return(
     `<section class="film-details">
@@ -46,7 +47,7 @@ const createNewPopuppTemplate = (state) => {
 	 </div>
 	 <div class="film-details__info-wrap">
 		<div class="film-details__poster">
-		  <img class="film-details__poster-img" src="./images/posters/${filmInfo.poster}" alt="">
+		  <img class="film-details__poster-img" src="${filmInfo.poster}" alt="">
 
 		  <p class="film-details__age">${filmInfo.ageRating}</p>
 		</div>
@@ -160,28 +161,32 @@ export default class NewPopuppView extends AbstractStatefulView {
   #changeFavorite = null;
   #changeAlredyWatched = null;
   #changeCommentsList = null;
+  #comments = [];
 
-  constructor ({card, onBtnClick, changeWatchlist, changeFavorite, changeAlredyWatched, changeCommentsList}) {
+
+  constructor ({card, onBtnClick, changeWatchlist, changeFavorite, changeAlredyWatched, changeCommentsList, filmsCommentsModel}) {
     super();
-    this._setState(NewPopuppView.parseCardToState(card));
+    this._setState(NewPopuppView.parseCardToState(card, filmsCommentsModel));
     this.#btnClosedClick = onBtnClick;
     this.#changeWatchlist = changeWatchlist;
     this.#changeFavorite = changeFavorite;
     this.#changeAlredyWatched = changeAlredyWatched;
     this.#changeCommentsList = changeCommentsList;
     this._restoreHandlers();
-
+    this.#comments = filmsCommentsModel;
 
   }
 
   // парс из модельки
-  static parseCardToState (card) {
+  static parseCardToState (card, comments) {
     return { ...card,
       emotion:'',
       scrollPosition:'',
       comment: '',
+      commentsArray: comments
     };
   }
+
 
   // парс в модельку
   static parseStateToCard (state) {
@@ -190,9 +195,11 @@ export default class NewPopuppView extends AbstractStatefulView {
     delete card.emotion;
     delete card.scrollPosition;
     delete card.comment;
+    delete card.commentsArray;
 
     return card;
   }
+
 
   get template() {
     return createNewPopuppTemplate(this._state);
@@ -253,15 +260,19 @@ export default class NewPopuppView extends AbstractStatefulView {
     const textarea = document.querySelector('.film-details__comment-input');
     if(evt.ctrlKey && evt.keyCode === 13) {
       this.updateElement(this._state.comments.push(createComment(textarea.value, emotion)));
-      textarea.value = '';
       this.saveScroll();
       this.#changeCommentsList(NewPopuppView.parseStateToCard(this._state));
+      textarea.value = '';
+      this._setState({comment: ''});
     }
 
   };
 
   // Удаление комментария
   #deleteComment = (evt) => {
+    if (evt.target.tagName !== 'BUTTON') {
+      return;
+    }
     const datasetId = Number(evt.target.dataset.idType);
     const index = this._state.comments.findIndex((comment) => comment.id === datasetId );
 
