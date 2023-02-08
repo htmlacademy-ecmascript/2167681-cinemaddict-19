@@ -13,14 +13,15 @@ export default class FilmsPopupPresenter {
   #changeAlredyWatched = null;
   popupStatus = ACTIVATE_MODE[1];
   #changeCommentsList = null;
+  #filmsCommentsModel = null;
 
-  constructor({mainBody, changeWatchlist, changeFavorite, changeAlredyWatched, changeCommentsList}) {
+  constructor({mainBody, changeWatchlist, changeFavorite, changeAlredyWatched, changeCommentsList, filmsCommentsModel}) {
     this.#mainBody = mainBody;
     this.#changeWatchlist = changeWatchlist;
     this.#changeFavorite = changeFavorite;
     this.#changeAlredyWatched = changeAlredyWatched;
     this.#changeCommentsList = changeCommentsList;
-
+    this.#filmsCommentsModel = filmsCommentsModel;
 
   }
 
@@ -37,7 +38,8 @@ export default class FilmsPopupPresenter {
       changeWatchlist: this.#changeWatchlist,
       changeFavorite: this.#changeFavorite,
       changeAlredyWatched: this.#changeAlredyWatched,
-      changeCommentsList: this.#changeCommentsList
+      changeCommentsList: this.#changeCommentsList,
+      filmsCommentsModel: this.#filmsCommentsModel.comments
 
     });
 

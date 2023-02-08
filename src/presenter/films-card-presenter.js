@@ -17,9 +17,10 @@ export default class FilmsCardPresenter {
   #popupPresenterMap = new Map();
   #popUpPresenter = null;
   #mainBody = null;
+  #filmsCommentsModel = null;
 
   constructor ({cardsContainer, mainContainersComponent, loadMoreButtonClickHandler, popUpPresenter,
-    changeWatchlist, changeFavorite, changeAlredyWatched, mainBody}) {
+    changeWatchlist, changeFavorite, changeAlredyWatched, mainBody, filmsCommentsModel}) {
     this.#cardsContainer = cardsContainer;
     this.#mainContainersComponent = mainContainersComponent;
     this.#loadMoreButtonClickHandler = loadMoreButtonClickHandler;
@@ -28,6 +29,7 @@ export default class FilmsCardPresenter {
     this.#changeFavorite = changeFavorite;
     this.#changeAlredyWatched = changeAlredyWatched;
     this.#mainBody = mainBody;
+    this.#filmsCommentsModel = filmsCommentsModel;
 
   }
 
@@ -66,7 +68,8 @@ export default class FilmsCardPresenter {
     remove(this.#loadMoreButtonComponent);
   }
 
-  #renderPopup (model) {
+  async #renderPopup (model) {
+    await this.#filmsCommentsModel.init(model.id);
     this.#popUpPresenter(model);
   }
 

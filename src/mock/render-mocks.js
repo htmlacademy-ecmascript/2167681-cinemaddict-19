@@ -53,9 +53,6 @@ const createComment = (text, emotion) => ({
   emotion: emotion ? emotion : getRandomIntInclusiveArrayElement(EMOTION)
 });
 
-const x = createComment;
-const array = [];
-array.push(x('Очень классный фильм'));
 
 // массив комментов
 const generateArrayFilmsInfo = (amount) => {

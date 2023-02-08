@@ -46,10 +46,18 @@ const UserAction = {
 };
 
 const UpdateType = {
+  INIT: 'INIT',
   BLOB: 'BLOB',
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+};
+
+
+const Rangs = {
+  NOVICE: 'Novice',
+  FAN: 'Fan',
+  MOVIE_BUFF: 'Movie Buff'
 };
 
 export {
@@ -62,5 +70,6 @@ export {
   DATE_FORMATS,
   COMPARE_VALUE_FOR_FILM_DURATION,
   UpdateType,
-  UserAction
+  UserAction,
+  Rangs
 };
