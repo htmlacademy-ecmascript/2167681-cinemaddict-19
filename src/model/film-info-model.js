@@ -18,27 +18,25 @@ export default class FilmInfoModel extends Observable {
 
   }
 
-  /*   updateFilm(updateType, update) {
+  async updateFilm(updateType, update) {
     const index = this.#cards.findIndex((card) => card.id === update.id);
-
     if (index === -1) {
       throw new Error('Can\'t update unexisting task');
     }
-
     try {
       const response = this.#filmsApiService.updateFilm(update);
       const updatedFilm = this.#adaptToClient(response);
       this.#cards = [
         ...this.#cards.slice(0, index),
-        update,
+        updatedFilm,
         ...this.#cards.slice(index + 1)
       ];
 
-      this._notify(updateType, update);
+      this._notify(updateType, updatedFilm);
     } catch(err) {
       throw new Error('Can\'t update task');
     }
-  } */
+  }
 
   async init () {
 
@@ -53,9 +51,9 @@ export default class FilmInfoModel extends Observable {
   }
 
 
-  #adaptToClient(films) {
-
+  #adaptToClient = (films) => {
     const release = {...films.film_info.release,
+      date: films.film_info.release.date !== null ? new Date(films.film_info.release.date) : films.film_info.release.date,
       releaseCountry: films.film_info.release.release_country
     };
 
@@ -65,7 +63,7 @@ export default class FilmInfoModel extends Observable {
       ageRating: films.film_info.age_rating,
       alternativeTitle: films.film_info.alternative_title,
       release: release,
-      totalRating: films.film_info.total_rating
+      totalRating: films.film_info.total_rating,
     };
 
     delete filmInfo.age_rating;
@@ -73,8 +71,8 @@ export default class FilmInfoModel extends Observable {
     delete filmInfo.total_rating;
 
     const userDetails = {...films.user_details,
-      alreadyWatched: films.user_details.already_watched,
-      watchingDate: films.user_details.watching_date,
+      alreadyWatched:  films.user_details.already_watched,
+      watchingDate: films.user_details.watching_date !== null ? new Date(films.user_details.watching_date) : films.user_details.watching_date
     };
 
     delete userDetails.already_watched;
@@ -90,7 +88,7 @@ export default class FilmInfoModel extends Observable {
 
 
     return adaptFilms;
-  }
+  };
 
 }
 
