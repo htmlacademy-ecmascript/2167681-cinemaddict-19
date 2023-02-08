@@ -1,11 +1,6 @@
 /* eslint-disable camelcase */
 import ApiService from './framework/api-service.js';
-
-
-const Method = {
-  GET: 'GET',
-  PUT: 'PUT',
-};
+import { Method } from './const.js';
 
 
 export default class FilmsApiService extends ApiService {
@@ -25,12 +20,12 @@ export default class FilmsApiService extends ApiService {
   }
 
 
-  async updateFilms(movie) {
+  async updateFilms(film) {
     const response = await this._load({
-      url: `movies/${movie.id}`,
+      url: `movies/${film.id}`,
       method: Method.PUT,
-      body: JSON.stringify(movie),
-      headers: new Headers({'Content-Type': 'aplication/js'}),
+      body: JSON.stringify(this.#adaptToServer(film)),
+      headers: new Headers({'Content-Type': 'application/json'}),
     });
 
     const parsedResponse = await ApiService.parseResponse(response);

@@ -48,6 +48,44 @@ function getRandomUniqInt (min, max) {
   };
 }
 
+const adaptToUser = (films) => {
+  const release = {...films.film_info.release,
+    date: films.film_info.release.date !== null ? new Date(films.film_info.release.date) : films.film_info.release.date,
+    releaseCountry: films.film_info.release.release_country
+  };
+
+  delete release.release_country;
+
+  const filmInfo = {...films.film_info,
+    ageRating: films.film_info.age_rating,
+    alternativeTitle: films.film_info.alternative_title,
+    release: release,
+    totalRating: films.film_info.total_rating,
+  };
+
+  delete filmInfo.age_rating;
+  delete filmInfo.alternative_title;
+  delete filmInfo.total_rating;
+
+  const userDetails = {...films.user_details,
+    alreadyWatched:  films.user_details.already_watched,
+    watchingDate: films.user_details.watching_date !== null ? new Date(films.user_details.watching_date) : films.user_details.watching_date
+  };
+
+  delete userDetails.already_watched;
+  delete userDetails.watching_date;
+
+  const adaptFilms = {...films,
+    filmInfo: filmInfo,
+    userDetails: userDetails,
+  };
+
+  delete adaptFilms.user_details;
+  delete adaptFilms.film_info;
+
+
+  return adaptFilms;
+};
 
 const activateButton	= (buttonData) => buttonData ? ACTIVATE_MODE.ACTIVE : ACTIVATE_MODE.INACTIVE;
 
@@ -76,4 +114,5 @@ export {
   activateButton,
   sortRating,
   sortDate,
+  adaptToUser
 };

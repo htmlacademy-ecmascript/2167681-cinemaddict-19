@@ -47,6 +47,7 @@ export default class ContentPresenter {
 
     this.#filmInfoModel.addObserver(this.#handleModeEvent);
     this.#filterFilmModel.addObserver(this.#handleModeEvent);
+	 this.#filmsCommentsModel.addObserver(this.#handleModeEvent);
   }
 
 
@@ -139,6 +140,8 @@ export default class ContentPresenter {
       changeAlredyWatched: this.#changeAlredyWatched,
       changeCommentsList: this.#changeCommentsList,
       filmsCommentsModel:this.#filmsCommentsModel,
+      deleteComment: this.#deleteComment,
+      hi: this.#hi,
 
     });
     this.#filmsPopupPresenter.init(card);
@@ -160,6 +163,10 @@ export default class ContentPresenter {
 
     render(this.#sortComponent, this.#filmContainer);
   };
+
+  #hi () {
+console.log('hi')
+  }
 
   //функция кнопки 'show more'
   #loadMoreButtonClickHandler = () => {
@@ -264,8 +271,11 @@ export default class ContentPresenter {
       case UserAction.UPDATE_FILM:
         this.#filmInfoModel.updateFilm(updateType,update);
         break;
-      case UserAction.CHANGE_COMMENT_LIST:
-        this.#filmInfoModel.updateFilm(updateType,update);
+      case UserAction.ADD_COMMENT:
+        this.#filmsCommentsModel.addComment(updateType,update);
+        break;
+      case UserAction.DELETE_COMMENT:
+        this.#filmsCommentsModel.deleteComment(updateType,update);
         break;
 
     }
@@ -274,10 +284,19 @@ export default class ContentPresenter {
   //функции для изменение данных в моделях
   #changeCommentsList = (data) => {
     this.#handleViewAction(
-      UserAction.CHANGE_COMMENT_LIST,
+      UserAction.DELETE_COMMENT,
       UpdateType.BLOB,
-      {...data,comments: data.comments});
+      data);
 
+  };
+
+  #deleteComment = (data) => {
+    console.log(data)
+    this.#handleViewAction(
+      UserAction.DELETE_COMMENT,
+      UpdateType.BLOB,
+      data);
+		
   };
 
 

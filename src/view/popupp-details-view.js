@@ -92,9 +92,9 @@ const createNewPopuppTemplate = (state) => {
 			 <tr class="film-details__row">
 				<td class="film-details__term">Genres</td>
 				<td class="film-details__cell">
-				  <span class="film-details__genre">${filmInfo.genre}</span>
-				  <span class="film-details__genre"></span>
-				  <span class="film-details__genre"></span></td>
+				  <span class="film-details__genre">${filmInfo.genre[0] ? filmInfo.genre[0] : ''}</span>
+				  <span class="film-details__genre">${filmInfo.genre[1] ? filmInfo.genre[1] : ''}</span>
+				  <span class="film-details__genre">${filmInfo.genre[2] ? filmInfo.genre[2] : ''}</span></td>
 			 </tr>
 		  </tbody></table>
 
@@ -161,19 +161,26 @@ export default class NewPopuppView extends AbstractStatefulView {
   #changeFavorite = null;
   #changeAlredyWatched = null;
   #changeCommentsList = null;
+  #deleteComment = null;
   #comments = [];
+  #wwww;
 
 
-  constructor ({card, onBtnClick, changeWatchlist, changeFavorite, changeAlredyWatched, changeCommentsList, filmsCommentsModel}) {
+  constructor ({card, onBtnClick, changeWatchlist, changeFavorite, changeAlredyWatched, changeCommentsList, filmsCommentsModel,
+    deleteComment, hi}) {
     super();
-    this._setState(NewPopuppView.parseCardToState(card, filmsCommentsModel));
+    this._setState(NewPopuppView.parseCardToState(card, filmsCommentsModel.comments));
     this.#btnClosedClick = onBtnClick;
     this.#changeWatchlist = changeWatchlist;
     this.#changeFavorite = changeFavorite;
     this.#changeAlredyWatched = changeAlredyWatched;
     this.#changeCommentsList = changeCommentsList;
+	 this.#deleteComment = deleteComment;
+	 this.#wwww = hi
     this._restoreHandlers();
     this.#comments = filmsCommentsModel;
+
+	 console.log(this._state)
 
   }
 
@@ -198,6 +205,12 @@ export default class NewPopuppView extends AbstractStatefulView {
     delete card.commentsArray;
 
     return card;
+  }
+
+  static parseToComments (state) {
+    const comments = state.commentsArray;
+
+    return comments;
   }
 
 
@@ -244,7 +257,7 @@ export default class NewPopuppView extends AbstractStatefulView {
     });
 
     this.element.querySelector('.film-details__comment-input').addEventListener('change', this.#saveComment);
-    this.element.querySelector('.film-details__comments-list').addEventListener('click', this.#deleteComment);
+    this.element.querySelector('.film-details__comments-list').addEventListener('click', this.#deleteCommentHendler);
   }
 
   //сохранение не отправленного комментария
@@ -258,8 +271,10 @@ export default class NewPopuppView extends AbstractStatefulView {
   #addComment = (evt) => {
     const emotion = this._state.emotion;
     const textarea = document.querySelector('.film-details__comment-input');
+
     if(evt.ctrlKey && evt.keyCode === 13) {
-      this.updateElement(this._state.comments.push(createComment(textarea.value, emotion)));
+      this.#comments.dodo(createComment(textarea.value, emotion));
+      this.updateElement(this._state.comments.push());
       this.saveScroll();
       this.#changeCommentsList(NewPopuppView.parseStateToCard(this._state));
       textarea.value = '';
@@ -268,24 +283,16 @@ export default class NewPopuppView extends AbstractStatefulView {
 
   };
 
+
   // Удаление комментария
-  #deleteComment = (evt) => {
+  #deleteCommentHendler = (evt) => {
+    evt.preventDefault();
     if (evt.target.tagName !== 'BUTTON') {
       return;
     }
-    const datasetId = Number(evt.target.dataset.idType);
-    const index = this._state.comments.findIndex((comment) => comment.id === datasetId );
-
-
-    this._state.comments = [
-      ...this._state.comments.slice(0, index),
-      ...this._state.comments.slice(index + 1)
-    ];
-
-    this.updateElement({...this._state, comments: this._state.comments});
     this.saveScroll();
-    this.#changeCommentsList(NewPopuppView.parseStateToCard(this._state));
 
+    this.#deleteComment(evt.target.dataset.idType);
   };
 
   //Изменение данный для фильтров
