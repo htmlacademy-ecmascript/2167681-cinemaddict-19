@@ -1,4 +1,4 @@
-import {render, RenderPosition, remove,} from '../framework/render.js';
+import {render, RenderPosition, remove} from '../framework/render.js';
 import { sortRating, sortDate} from '../utils/common.js';
 import NewFilmsMainContainerView from '../view/films-main-container-view.js';
 import NewMainContainersComponentView from '../view/main-containers-component-view.js';
@@ -47,6 +47,7 @@ export default class ContentPresenter {
 
     this.#filmInfoModel.addObserver(this.#handleModeEvent);
     this.#filterFilmModel.addObserver(this.#handleModeEvent);
+    this.#filmsCommentsModel.addObserver(this.#handleModeEvent);
   }
 
 
@@ -137,19 +138,24 @@ export default class ContentPresenter {
       changeWatchlist: this.#changeWatchlist,
       changeFavorite: this.#changeFavorite,
       changeAlredyWatched: this.#changeAlredyWatched,
-      changeCommentsList: this.#changeCommentsList,
       filmsCommentsModel:this.#filmsCommentsModel,
-
+      deleteComment: this.#deleteComment,
+      addComment: this.#addComment,
     });
     this.#filmsPopupPresenter.init(card);
   };
 
   #renderUserRang () {
+    if (this.#userRangView) {
+      remove(this.#userRangView);
+    }
+
     this.#userRangView = new NewUserRangView({
       filmModel: this.#filmInfoModel
     });
 
-    render (this.#userRangView, this.#header,);
+    render(this.#userRangView, this.#header);
+
   }
 
   #renderSort = () => {
@@ -160,6 +166,7 @@ export default class ContentPresenter {
 
     render(this.#sortComponent, this.#filmContainer);
   };
+
 
   //функция кнопки 'show more'
   #loadMoreButtonClickHandler = () => {
@@ -230,11 +237,10 @@ export default class ContentPresenter {
 
 
   #handleModeEvent = (updateType, data) => {
+
     switch(updateType) {
-      case UpdateType.BLOB:
-        this.#filmCardPresenters.get(data.id).init(data);
-        break;
       case UpdateType.PATCH:
+        this.#renderUserRang();
         this.#filmCardPresenters.get(data.id).init(data);
         if (this.#filmsPopupPresenter) {
           this.#filmsPopupPresenter.init(data);
@@ -264,19 +270,30 @@ export default class ContentPresenter {
       case UserAction.UPDATE_FILM:
         this.#filmInfoModel.updateFilm(updateType,update);
         break;
-      case UserAction.CHANGE_COMMENT_LIST:
-        this.#filmInfoModel.updateFilm(updateType,update);
+      case UserAction.ADD_COMMENT:
+        this.#filmsCommentsModel.addComment(updateType,update);
+        break;
+      case UserAction.DELETE_COMMENT:
+        this.#filmsCommentsModel.deleteComment(updateType,update);
         break;
 
     }
   };
 
   //функции для изменение данных в моделях
-  #changeCommentsList = (data) => {
+  #addComment = (data) => {
     this.#handleViewAction(
-      UserAction.CHANGE_COMMENT_LIST,
-      UpdateType.BLOB,
-      {...data,comments: data.comments});
+      UserAction.ADD_COMMENT,
+      UpdateType.PATCH,
+      data);
+
+  };
+
+  #deleteComment = (data) => {
+    this.#handleViewAction(
+      UserAction.DELETE_COMMENT,
+      UpdateType.PATCH,
+      data);
 
   };
 

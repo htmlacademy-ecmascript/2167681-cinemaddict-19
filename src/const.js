@@ -42,12 +42,12 @@ const START_VALUE = 0;
 
 const UserAction = {
   UPDATE_FILM: 'update-film',
-  CHANGE_COMMENT_LIST: 'change-comment-list',
+  DELETE_COMMENT: 'delete-comment',
+  ADD_COMMENT: 'add-comment',
 };
 
 const UpdateType = {
   INIT: 'INIT',
-  BLOB: 'BLOB',
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
@@ -58,6 +58,13 @@ const Rangs = {
   NOVICE: 'Novice',
   FAN: 'Fan',
   MOVIE_BUFF: 'Movie Buff'
+};
+
+const Method = {
+  GET: 'GET',
+  PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE'
 };
 
 export {
@@ -71,5 +78,6 @@ export {
   COMPARE_VALUE_FOR_FILM_DURATION,
   UpdateType,
   UserAction,
-  Rangs
+  Rangs,
+  Method
 };

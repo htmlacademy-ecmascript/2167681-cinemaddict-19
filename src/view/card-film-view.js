@@ -5,7 +5,7 @@ import {FILMS_BUTTON_TYPE, DATE_FORMATS, COMPARE_VALUE_FOR_FILM_DURATION} from '
 
 // карточка с фильмом
 const createNewCardFilmTemplate = (card) => {
-  const { comments, filmInfo, userDetails} = card;
+  const {comments, filmInfo, userDetails} = card;
   const durationTime = humanizeTaskDueDate(filmInfo.duration, filmInfo.duration < COMPARE_VALUE_FOR_FILM_DURATION ? DATE_FORMATS.DURATION_M : DATE_FORMATS.DURATION_H_M);
   const vDate = humanizeTaskDueDate(filmInfo.date);
   return(
@@ -16,7 +16,7 @@ const createNewCardFilmTemplate = (card) => {
 	  <p class="film-card__info">
 		 <span class="film-card__year">${vDate}</span>
 		 <span class="film-card__duration">${durationTime}</span>
-		 <span class="film-card__genre">${filmInfo.genre}</span>
+		 <span class="film-card__genre">${filmInfo.genre[0]}</span>
 	  </p>
 	  <img src="${filmInfo.poster}" alt="" class="film-card__poster">
 	  <p class="film-card__description">${filmInfo.description}</p>
@@ -40,7 +40,7 @@ export default class NewCardFilmView extends AbstractView {
   #changeAlreadyWatched = null;
 
 
-  constructor({card, onClick, changeWatchlist, changeFavorite, changeAlredyWatched,}) {
+  constructor({card, onClick, changeWatchlist, changeFavorite, changeAlredyWatched}) {
     super();
     this.#card = card;
     this.#openPopup = onClick;

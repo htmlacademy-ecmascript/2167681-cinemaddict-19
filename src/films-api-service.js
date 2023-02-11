@@ -1,11 +1,6 @@
 /* eslint-disable camelcase */
 import ApiService from './framework/api-service.js';
-
-
-/* const Method = {
-  GET: 'GET',
-  PUT: 'PUT',
-}; */
+import { Method } from './const.js';
 
 
 export default class FilmsApiService extends ApiService {
@@ -17,30 +12,40 @@ export default class FilmsApiService extends ApiService {
   }
 
 
-  /*   async updateFilms(movie) {
+  getget (film) {
+    const x = this.#adaptToServer(film);
+
+    return this.updateFilms(x);
+
+  }
+
+
+  async updateFilms(film) {
     const response = await this._load({
-      url: `movies/${movie.id}`,
+      url: `movies/${film.id}`,
       method: Method.PUT,
-      body: JSON.stringify(this.#adaptToServer(movie)),
-      headers: new Headers({'Content-Type': 'aplication/js'}),
+      body: JSON.stringify(this.#adaptToServer(film)),
+      headers: new Headers({'Content-Type': 'application/json'}),
     });
 
     const parsedResponse = await ApiService.parseResponse(response);
 
     return parsedResponse;
-  } */
+  }
 
   #adaptToServer(films) {
-
     const release = {...films.filmInfo.release,
-      release_country: films.filmInfo.release.releaseCountry};
+      release_country: films.filmInfo.release.releaseCountry,
+      date: films.filmInfo.release.date instanceof Date ? films.filmInfo.release.date.toISOString() : null
+    };
 
     delete release.releaseCountry;
 
     const film_info = {...films.filmInfo,
       age_rating: films.filmInfo.ageRating,
       total_rating: films.filmInfo.totalRating,
-      alternative_title: films.filmInfo.alternativeTitle
+      alternative_title: films.filmInfo.alternativeTitle,
+      release: release
     };
 
     delete film_info.ageRating;
@@ -49,7 +54,7 @@ export default class FilmsApiService extends ApiService {
 
     const user_details = {...films.userDetails,
       already_watched: films.userDetails.alreadyWatched,
-      watching_date: films.userDetails.watchingDate
+      watching_date: films.userDetails.watchingDate instanceof Date ? films.userDetails.watchingDate.toISOString() : null
 
     };
     delete user_details.alreadyWatched;
