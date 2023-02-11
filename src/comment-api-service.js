@@ -9,11 +9,12 @@ export default class CommentsApiService extends ApiService {
     return this._load({url: `comments/${id}`}).then(ApiService.parseResponse);
   }
 
-  async addComment (comment, film) {
+  async addComment (id, commentData) {
+
     const response = await this._load({
-      url: `comments/${film.id}`,
+      url: `comments/${id}`,
       method: Method.POST,
-      body: JSON.stringify(comment),
+      body: JSON.stringify(commentData),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 

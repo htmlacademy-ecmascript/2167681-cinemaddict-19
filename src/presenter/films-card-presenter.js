@@ -47,6 +47,7 @@ export default class FilmsCardPresenter {
       changeWatchlist: this.#changeWatchlist,
       changeFavorite: this.#changeFavorite,
       changeAlredyWatched: this.#changeAlredyWatched,
+      comments:this.#filmsCommentsModel.comments,
 
     });
 
@@ -67,6 +68,11 @@ export default class FilmsCardPresenter {
     remove(this.#cardFilmComponent);
     remove(this.#loadMoreButtonComponent);
   }
+
+  removeCard() {
+    remove(this.#cardFilmComponent);
+  }
+
 
   async #renderPopup (model) {
     await this.#filmsCommentsModel.init(model.id);

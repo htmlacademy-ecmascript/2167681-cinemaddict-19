@@ -2,7 +2,6 @@
 import { humanizeTaskDueDate } from '../utils/common.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {FILMS_BUTTON_TYPE, START_VALUE, Emotion, DATE_FORMATS, COMPARE_VALUE_FOR_FILM_DURATION} from '../const.js';
-import { createComment } from '../mock/render-mocks.js';
 
 // отрисовка выбранной эмоции
 const createEmotionTemplate = (emotion) =>
@@ -160,37 +159,33 @@ export default class NewPopuppView extends AbstractStatefulView {
   #changeWatchlist = null;
   #changeFavorite = null;
   #changeAlredyWatched = null;
-  #changeCommentsList = null;
   #deleteComment = null;
-  #comments = [];
-  #wwww;
+  #addComment = null;
+  #comments;
 
 
-  constructor ({card, onBtnClick, changeWatchlist, changeFavorite, changeAlredyWatched, changeCommentsList, filmsCommentsModel,
-    deleteComment, hi}) {
+  constructor ({card, onBtnClick, changeWatchlist, changeFavorite, changeAlredyWatched, filmsCommentsModel,
+    deleteComment, addComment}) {
     super();
     this._setState(NewPopuppView.parseCardToState(card, filmsCommentsModel.comments));
     this.#btnClosedClick = onBtnClick;
     this.#changeWatchlist = changeWatchlist;
     this.#changeFavorite = changeFavorite;
     this.#changeAlredyWatched = changeAlredyWatched;
-    this.#changeCommentsList = changeCommentsList;
-	 this.#deleteComment = deleteComment;
-	 this.#wwww = hi
+    this.#deleteComment = deleteComment;
     this._restoreHandlers();
-    this.#comments = filmsCommentsModel;
-
-	 console.log(this._state)
+    this.#addComment = addComment;
+    this.#comments = filmsCommentsModel.comments;
 
   }
 
   // парс из модельки
   static parseCardToState (card, comments) {
     return { ...card,
-      emotion:'',
-      scrollPosition:'',
+      emotion: this._state.emotion ?? 0,
+      scrollPosition: this._state.scrollPosition ?? 0,
       comment: '',
-      commentsArray: comments
+      comments: comments
     };
   }
 
@@ -202,13 +197,12 @@ export default class NewPopuppView extends AbstractStatefulView {
     delete card.emotion;
     delete card.scrollPosition;
     delete card.comment;
-    delete card.commentsArray;
 
     return card;
   }
 
   static parseToComments (state) {
-    const comments = state.commentsArray;
+    const comments = state.comments;
 
     return comments;
   }
@@ -225,9 +219,16 @@ export default class NewPopuppView extends AbstractStatefulView {
 
   };
 
+  //апдате
+  update (card) {
+    this._setState(NewPopuppView.parseCardToState(card, this.#comments));
+
+    this.updateElement(this._state);
+  }
 
   // сохранение скрола
   saveScroll () {
+    //console.log(this._state.scrollPosition);
     this.element.scrollTo(START_VALUE, this._state.scrollPosition);
   }
 
@@ -251,7 +252,7 @@ export default class NewPopuppView extends AbstractStatefulView {
       }
     });
 
-    this.element.querySelector('.film-details__comment-input').addEventListener('keydown', this.#addComment);
+    this.element.querySelector('.film-details__comment-input').addEventListener('keydown', this.#addCommentHendler);
     this.element.addEventListener('scroll', () => {
       this._setState({scrollPosition: this.element.scrollTop});
     });
@@ -268,18 +269,18 @@ export default class NewPopuppView extends AbstractStatefulView {
   };
 
   // добавление комментария
-  #addComment = (evt) => {
-    const emotion = this._state.emotion;
+  #addCommentHendler = (evt) => {
     const textarea = document.querySelector('.film-details__comment-input');
 
     if(evt.ctrlKey && evt.keyCode === 13) {
-      this.#comments.dodo(createComment(textarea.value, emotion));
-      this.updateElement(this._state.comments.push());
-      this.saveScroll();
-      this.#changeCommentsList(NewPopuppView.parseStateToCard(this._state));
-      textarea.value = '';
-      this._setState({comment: ''});
+      evt.preventDefault();
+      this.#addComment({
+        comment: textarea.value,
+        emotion: this._state.emotion,
+        film: NewPopuppView.parseStateToCard(this._state)
+      });
     }
+
 
   };
 
@@ -290,9 +291,12 @@ export default class NewPopuppView extends AbstractStatefulView {
     if (evt.target.tagName !== 'BUTTON') {
       return;
     }
-    this.saveScroll();
 
-    this.#deleteComment(evt.target.dataset.idType);
+    this.#deleteComment({
+      id:evt.target.dataset.idType,
+      film: NewPopuppView.parseStateToCard(this._state),
+    });
+    this.saveScroll();
   };
 
   //Изменение данный для фильтров

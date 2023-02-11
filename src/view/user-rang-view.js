@@ -3,7 +3,7 @@ import {filter} from '../utils/filters.js';
 import { FilterType, Rangs} from '../const';
 
 // ранг и аватар юзера
-const createNewUserRangTemplate = () => '<section class="header__profile profile"><p class="profile__rating ">Movie Buff</p><img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35"></section>';
+const createNewUserRangTemplate = (rang) => `<section class="header__profile profile ${rang === null ? 'visually-hidden' : '' }"><p class="profile__rating ">${rang}</p><img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35"></section>`;
 
 export default class NewUserRangView extends AbstractView {
 
@@ -12,26 +12,30 @@ export default class NewUserRangView extends AbstractView {
 
   constructor ({filmModel}) {
     super();
-    this.#filmModel = filmModel;
-
+    this.#filmModel = filmModel.getCards();
+    const alreadyWatched = filter[FilterType.HISTORY](this.#filmModel).length;
+    this.counterWatchedFilms(alreadyWatched);
   }
 
   get template() {
     return createNewUserRangTemplate(this.#currentRang);
   }
 
-  counterWatchedFilms () {
-    const films = this.#filmModel.getCards();
-    const count = filter[FilterType.HISTORY](films).length;
-    switch (count) {
-      case (count >= 1 && count <= 10):
+  counterWatchedFilms (length) {
+
+    switch (true) {
+      case length >= 1 && length <= 10 :
         this.#currentRang = Rangs.NOVICE;
         break;
-      case (count >= 11 && count <= 20):
+      case length > 10 && length <= 20 :
         this.#currentRang = Rangs.FAN;
         break;
-      case (count >= 21):
+      case length > 20 :
         this.#currentRang = Rangs.MOVIE_BUFF;
+        break;
+
+      default:
+        this.#currentRang = null;
     }
   }
 

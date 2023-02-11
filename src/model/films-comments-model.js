@@ -1,5 +1,5 @@
 import Observable from '../framework/observable.js';
-import { adaptToUser } from '../utils/common.js';
+
 
 export default class FilmsCommentsModel extends Observable {
   #comments = [];
@@ -16,39 +16,53 @@ export default class FilmsCommentsModel extends Observable {
   }
 
   async init (id) {
-    this.#comments = await this.#commentsApiService.getComments(id);
+    try
+    {
+      this.#comments = await this.#commentsApiService.getComments(id);
+    } catch (err) {
+      this.#comments = [];
+    }
   }
 
   async addComment(updateType, update) {
+    const {film, emotion, comment} = update;
+
+    const commentData = {emotion, comment};
+
     try {
-      const {comments, movie} = await this.#commentsApiService.addComment(comment, film);
+      await this.#commentsApiService.addComment(film.id, commentData);
+      await this.init(film.id);
 
-      this.#comments = comments;
-      const adaptedFilm = adaptToUser(movie);
-      const update = {
-        film: adaptedFilm,
-        scroll: scroll,
-      };
+      film.comments = this.#comments.map((iD) => iD.id);
 
-      this._notify(updateType, update);
+      this._notify(updateType, film);
     } catch (err) {
       throw new Error('Can\'t add comment');
     }
 
   }
 
+  // удаление комментария
 
   async deleteComment (updateType, update) {
-    const index = this.#comments.findeIndex((comment) => comment.id === update);
+    const { id, film} = update;
+    const index = this.#comments.findIndex((comment) => comment.id === id);
     if (index === -1) {
       throw new Error('Unknow comment');
     }
-    try {
-      await this.#commentsApiService.deleteComment(update.id);
-      this.#comments = this.#comments.filter((comment) => comment.id !== update.id);
-      update.film.comments = this.#comments.map(({id}) => id);
 
-      this._notify(updateType, update);
+    try {
+
+      await this.#commentsApiService.deleteComment(id);
+      this.#comments = [
+        ...this.#comments.slice(0, index),
+        ...this.#comments.slice(index + 1)
+      ];
+
+      film.comments = this.#comments.map((iD) => iD.id);
+
+      this._notify(updateType, film);
+
     } catch (err) {
       throw new Error('Can\'t delete this comment');
     }

@@ -43,12 +43,11 @@ const START_VALUE = 0;
 const UserAction = {
   UPDATE_FILM: 'update-film',
   DELETE_COMMENT: 'delete-comment',
-  ADD_COMMENT: 'delete-comment',
+  ADD_COMMENT: 'add-comment',
 };
 
 const UpdateType = {
   INIT: 'INIT',
-  BLOB: 'BLOB',
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
