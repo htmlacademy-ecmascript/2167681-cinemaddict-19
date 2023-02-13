@@ -1,5 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
+// загрузочная заставка списка фильмов
 function createNoTaskTemplate() {
   return (
     `<section class="films">
