@@ -21,7 +21,7 @@ const createNewNavFilmTemplate = (navItems, currentFilterType) => {
 };
 
 
-export default class NewNavFilmView extends AbstractView {
+export default class NewFiltersFilmView extends AbstractView {
   #filtersNav = null;
   #currentFilterType = null;
   #onFilterTypeChange = null;
@@ -40,6 +40,7 @@ export default class NewNavFilmView extends AbstractView {
     return createNewNavFilmTemplate(this.#filtersNav, this.#currentFilterType);
   }
 
+  // посветка выбранного фильтра
   #handleFilterTypeChange = (evt) => {
     evt.preventDefault();
     if (evt.target.dataset.filterType) {

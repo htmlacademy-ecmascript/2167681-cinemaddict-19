@@ -3,7 +3,7 @@ import {filter} from '../utils/filters.js';
 import { FilterType, Rangs} from '../const';
 
 // ранг и аватар юзера
-const createNewUserRangTemplate = (rang) => `<section class="header__profile profile ${rang === null ? 'visually-hidden' : '' }"><p class="profile__rating ">${rang}</p><img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35"></section>`;
+const createNewUserRangTemplate = (rang) => `<section class ="header__profile profile ${rang === null ? 'visually-hidden' : '' }"><p class="profile__rating ">${rang}</p><img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35"></section>`;
 
 export default class NewUserRangView extends AbstractView {
 
@@ -14,14 +14,15 @@ export default class NewUserRangView extends AbstractView {
     super();
     this.#filmModel = filmModel.getCards();
     const alreadyWatched = filter[FilterType.HISTORY](this.#filmModel).length;
-    this.counterWatchedFilms(alreadyWatched);
+    this.#counterWatchedFilms(alreadyWatched);
   }
 
   get template() {
     return createNewUserRangTemplate(this.#currentRang);
   }
 
-  counterWatchedFilms (length) {
+  // изенение звания в зависимости от просмотренных фильмов
+  #counterWatchedFilms (length) {
 
     switch (true) {
       case length >= 1 && length <= 10 :

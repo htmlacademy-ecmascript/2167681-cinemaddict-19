@@ -6,13 +6,19 @@ import NewCardsFilmContainerView from '../view/cards-film-container-view.js';
 import NewFilterTitleView from '../view/filter-title-view.js';
 import FilmsCardPresenter from './films-card-presenter.js';
 import FilmsPopupPresenter from './films-popup-presenter.js';
-import NewSortsFilmView from '../view/sort-view.js';
+import NewSortsFilmView from '../view/sort-film-view.js';
 import LoadingView from '../view/loading-view.js';
 import {FilterType, SortMode, UpdateType, UserAction} from '../const.js';
 import {filter} from '../utils/filters.js';
 import NewUserRangView from '../view/user-rang-view.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 
 const FILMS_COUNT_PER_STEP = 5;
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 export default class ContentPresenter {
   #filmsMainContainer = new NewFilmsMainContainerView();
@@ -25,7 +31,6 @@ export default class ContentPresenter {
   #filmContainer;
   #filmInfoModel;
   #mainBody = null;
-  #cardFilms = [];
   #arrayFilmsCount = FILMS_COUNT_PER_STEP;
   #filmCardPresenter = null;
   #filmsPopupPresenter = null;
@@ -35,6 +40,10 @@ export default class ContentPresenter {
   #filterFilmModel = null;
   #isLoading = true;
   #filmsCommentsModel = null;
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT,
+  });
 
 
   constructor({header, filmContainer, filmInfoModel, mainBody, filterFilmModel, filmsCommentsModel}) {
@@ -109,9 +118,9 @@ export default class ContentPresenter {
       mainContainersComponent: this.#mainContainersComponent.element,
       loadMoreButtonClickHandler: this.#loadMoreButtonClickHandler,
       popUpPresenter:  this.#connectFilmsPopupPresenter,
-      changeWatchlist: this.#changeWatchlist,
-      changeFavorite: this.#changeFavorite,
-      changeAlredyWatched: this.#changeAlredyWatched,
+      changeWatchlist: this.#onChangeWatchlist,
+      changeFavorite: this.#onChangeFavorite,
+      changeAlredyWatched: this.#onChangeAlredyWatched,
       mainBody: this.#mainBody,
       filmsCommentsModel: this.#filmsCommentsModel,
     });
@@ -135,12 +144,12 @@ export default class ContentPresenter {
 
     this.#filmsPopupPresenter = new FilmsPopupPresenter({
       mainBody: this.#mainBody,
-      changeWatchlist: this.#changeWatchlist,
-      changeFavorite: this.#changeFavorite,
-      changeAlredyWatched: this.#changeAlredyWatched,
+      changeWatchlist: this.#onChangeWatchlist,
+      changeFavorite: this.#onChangeFavorite,
+      changeAlredyWatched: this.#onChangeAlredyWatched,
       filmsCommentsModel:this.#filmsCommentsModel,
-      deleteComment: this.#deleteComment,
-      addComment: this.#addComment,
+      deleteComment: this.#onDeleteComment,
+      addComment: this.#onAddComment,
     });
     this.#filmsPopupPresenter.init(card);
   };
@@ -265,23 +274,44 @@ export default class ContentPresenter {
     }
   };
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
     switch(actionType) {
       case UserAction.UPDATE_FILM:
-        this.#filmInfoModel.updateFilm(updateType,update);
+        try{
+          if (this.#filmsPopupPresenter) {
+            this.#filmsPopupPresenter.setSaving();
+          }
+          await this.#filmInfoModel.updateFilm(updateType,update);
+        } catch (err) {
+          if (this.#filmsPopupPresenter && this.#filmsPopupPresenter.isOpen === true) {
+            this.#filmsPopupPresenter.setAborting(update.idToError);
+          } else {
+            this.#filmCardPresenters.get(update.id).setAborting();
+          }}
         break;
+
       case UserAction.ADD_COMMENT:
-        this.#filmsCommentsModel.addComment(updateType,update);
+        try {this.#filmsPopupPresenter.setSaving();
+          await this.#filmsCommentsModel.addComment(updateType,update);
+        } catch (err) {
+          this.#filmsPopupPresenter.setAborting(update.idToError);
+        }
         break;
       case UserAction.DELETE_COMMENT:
-        this.#filmsCommentsModel.deleteComment(updateType,update);
+        try {this.#filmsPopupPresenter.setDeleting(update.id);
+          await this.#filmsCommentsModel.deleteComment(updateType,update);
+        } catch (err) {
+          this.#filmsPopupPresenter.setAborting(update.idToError);
+        }
         break;
 
     }
+    this.#uiBlocker.unblock();
   };
 
   //функции для изменение данных в моделях
-  #addComment = (data) => {
+  #onAddComment = (data) => {
     this.#handleViewAction(
       UserAction.ADD_COMMENT,
       UpdateType.PATCH,
@@ -289,7 +319,7 @@ export default class ContentPresenter {
 
   };
 
-  #deleteComment = (data) => {
+  #onDeleteComment = (data) => {
     this.#handleViewAction(
       UserAction.DELETE_COMMENT,
       UpdateType.PATCH,
@@ -298,7 +328,7 @@ export default class ContentPresenter {
   };
 
 
-  #changeWatchlist = (data) => {
+  #onChangeWatchlist = (data) => {
     const filterType = this.#filterFilmModel.filter;
     const currentUpdateType = filterType === FilterType.ALL ? UpdateType.PATCH : UpdateType.MINOR;
 
@@ -308,7 +338,7 @@ export default class ContentPresenter {
       {...data,userDetails:{...data.userDetails, watchlist: !data.userDetails.watchlist}});
   };
 
-  #changeFavorite = (data) => {
+  #onChangeFavorite = (data) => {
     const filterType = this.#filterFilmModel.filter;
     const currentUpdateType = filterType === FilterType.ALL ? UpdateType.PATCH : UpdateType.MINOR;
 
@@ -318,10 +348,9 @@ export default class ContentPresenter {
       {...data,userDetails:{...data.userDetails, favorite: !data.userDetails.favorite}});
   };
 
-  #changeAlredyWatched = (data) => {
+  #onChangeAlredyWatched = (data) => {
     const filterType = this.#filterFilmModel.filter;
     const currentUpdateType = filterType === FilterType.ALL ? UpdateType.PATCH : UpdateType.MINOR;
-
     this.#handleViewAction(
       UserAction.UPDATE_FILM,
       currentUpdateType,
