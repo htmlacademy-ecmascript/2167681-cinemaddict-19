@@ -24,8 +24,9 @@ export default class FilmsCommentsModel extends Observable {
     }
   }
 
+  // добавление комментария
   async addComment(updateType, update) {
-    const {film, emotion, comment} = update;
+    const {film, emotion, comment, idToError, scroll} = update;
 
     const commentData = {emotion, comment};
 
@@ -35,7 +36,13 @@ export default class FilmsCommentsModel extends Observable {
 
       film.comments = this.#comments.map((iD) => iD.id);
 
-      this._notify(updateType, film);
+      const updateToUser = {...film,
+        comments:this.#comments.map((iD) => iD.id),
+        idToError: idToError,
+        scrollPosition: scroll,
+      };
+
+      this._notify(updateType, updateToUser);
     } catch (err) {
       throw new Error('Can\'t add comment');
     }
@@ -45,7 +52,7 @@ export default class FilmsCommentsModel extends Observable {
   // удаление комментария
 
   async deleteComment (updateType, update) {
-    const { id, film} = update;
+    const { id, film, idToError, scroll} = update;
     const index = this.#comments.findIndex((comment) => comment.id === id);
     if (index === -1) {
       throw new Error('Unknow comment');
@@ -59,9 +66,13 @@ export default class FilmsCommentsModel extends Observable {
         ...this.#comments.slice(index + 1)
       ];
 
-      film.comments = this.#comments.map((iD) => iD.id);
+      const updateToUser = {...film,
+        comments:this.#comments.map((iD) => iD.id),
+        idToError: idToError,
+        scrollPosition: scroll,
+      };
 
-      this._notify(updateType, film);
+      this._notify(updateType, updateToUser);
 
     } catch (err) {
       throw new Error('Can\'t delete this comment');

@@ -19,7 +19,7 @@ export default class NewFilterTitleView extends AbstractView {
     return createFilterTitleViewTemplate(this.#changeHeader());
   }
 
-
+  // если выбранный фильтр пуст
   #changeHeader = () => {
 
     switch(this.#currentFilter) {

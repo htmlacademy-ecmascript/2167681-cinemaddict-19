@@ -1,4 +1,4 @@
-import NewNavFilmView from '../view/nav-films-view';
+import NewFiltersFilmView from '../view/filters-films-view.js';
 import {filter} from '../utils/filters.js';
 import {render, remove, replace, RenderPosition} from '../framework/render.js';
 import { FilterType, UpdateType } from '../const';
@@ -55,7 +55,7 @@ export default class FilterPresenter {
     const prevFilterComponent = this.#filterComponent;
 
 
-    this.#filterComponent = new NewNavFilmView({
+    this.#filterComponent = new NewFiltersFilmView({
       filters,
       currentFilterType: this.#filterModel.filter,
       onFilterTypeChange:  this.#handleFilterTypeChange,

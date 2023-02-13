@@ -13,16 +13,16 @@ function createNewSortsFilmTemplate (currentSort){
 
 export default class NewSortsFilmView extends AbstractView {
 
-  #sortChange = null;
+  #onSortChange = null;
   #currentSort = null;
 
   constructor ({onSortTypeChange, currentSortType}) {
     super();
-    this.#sortChange = onSortTypeChange;
+    this.#onSortChange = onSortTypeChange;
     this.#currentSort = currentSortType;
 
 
-    this.element.addEventListener('click', this.#sortTypeChangeHendler);
+    this.element.addEventListener('click', this.#sortTypeChangeHandler);
 
   }
 
@@ -30,8 +30,8 @@ export default class NewSortsFilmView extends AbstractView {
     return createNewSortsFilmTemplate(this.#currentSort);
   }
 
-
-  #sortTypeChangeHendler = (evt) => {
+  // подсветка выбранной сортировки
+  #sortTypeChangeHandler = (evt) => {
 
     if (evt.target.tagName !== 'A') {
       return;
@@ -39,7 +39,7 @@ export default class NewSortsFilmView extends AbstractView {
     this.#currentSort = evt.target.dataset.sortType;
     evt.preventDefault();
     createNewSortsFilmTemplate();
-    this.#sortChange(evt.target.dataset.sortType);
+    this.#onSortChange(evt.target.dataset.sortType);
   };
 
 }

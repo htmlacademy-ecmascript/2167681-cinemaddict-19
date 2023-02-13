@@ -1,5 +1,4 @@
 import NewCardFilmView from '../view/card-film-view.js';
-//import NewPopuppView from '../view/popupp-details-view.js';
 import {remove, render, replace} from '../framework/render.js';
 import NewShowMoreButtonView from '../view/show-more-button-view.js';
 
@@ -11,9 +10,9 @@ export default class FilmsCardPresenter {
   #cardsModels = null;
   #loadMoreButtonComponent = null;
   #loadMoreButtonClickHandler = null;
-  #changeWatchlist = null;
-  #changeFavorite = null;
-  #changeAlredyWatched = null;
+  #onChangeWatchlist = null;
+  #onChangeFavorite = null;
+  #onChangeAlredyWatched = null;
   #popupPresenterMap = new Map();
   #popUpPresenter = null;
   #mainBody = null;
@@ -25,9 +24,9 @@ export default class FilmsCardPresenter {
     this.#mainContainersComponent = mainContainersComponent;
     this.#loadMoreButtonClickHandler = loadMoreButtonClickHandler;
     this.#popUpPresenter = popUpPresenter;
-    this.#changeWatchlist = changeWatchlist;
-    this.#changeFavorite = changeFavorite;
-    this.#changeAlredyWatched = changeAlredyWatched;
+    this.#onChangeWatchlist = changeWatchlist;
+    this.#onChangeFavorite = changeFavorite;
+    this.#onChangeAlredyWatched = changeAlredyWatched;
     this.#mainBody = mainBody;
     this.#filmsCommentsModel = filmsCommentsModel;
 
@@ -44,9 +43,9 @@ export default class FilmsCardPresenter {
 
         this.#renderPopup(this.#cardsModels);
       },
-      changeWatchlist: this.#changeWatchlist,
-      changeFavorite: this.#changeFavorite,
-      changeAlredyWatched: this.#changeAlredyWatched,
+      changeWatchlist: this.#onChangeWatchlist,
+      changeFavorite: this.#onChangeFavorite,
+      changeAlredyWatched: this.#onChangeAlredyWatched,
       comments:this.#filmsCommentsModel.comments,
 
     });
@@ -88,4 +87,7 @@ export default class FilmsCardPresenter {
   }
 
 
+  setAborting() {
+    this.#cardFilmComponent.shake();
+  }
 }

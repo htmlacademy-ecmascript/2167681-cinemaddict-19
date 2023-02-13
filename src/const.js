@@ -5,7 +5,7 @@ const FilterType = {
   FAVORITES: 'Favorites',
 };
 
-const ACTIVATE_MODE = {
+const ACTIVE_MODE = {
   ACTIVE: 'active',
   INACTIVE: 'inactive'
 };
@@ -33,12 +33,16 @@ const DATE_FORMATS = {
   RELEASE:'D MMMM YYYY',
   DURATION_M: ' mm[m]',
   DURATION_H_M: 'H[h] mm[m]',
-  COMMENT: 'D MMMM YYYY H:MM',
+  COMMENT: 'D MMMM YYYY HH:mm',
 };
 
-const COMPARE_VALUE_FOR_FILM_DURATION = '0 1 0';
+const NUMBER_TO_COMPARE = '0 1 0';
 
 const START_VALUE = 0;
+
+const FormsTextArea = {
+  COMMENT_FILM : 'comment-film'
+};
 
 const UserAction = {
   UPDATE_FILM: 'update-film',
@@ -69,15 +73,16 @@ const Method = {
 
 export {
   FilterType,
-  ACTIVATE_MODE,
+  ACTIVE_MODE,
   FILMS_BUTTON_TYPE,
   SortMode,
   Emotion,
   START_VALUE,
   DATE_FORMATS,
-  COMPARE_VALUE_FOR_FILM_DURATION,
+  NUMBER_TO_COMPARE,
   UpdateType,
   UserAction,
   Rangs,
-  Method
+  Method,
+  FormsTextArea
 };

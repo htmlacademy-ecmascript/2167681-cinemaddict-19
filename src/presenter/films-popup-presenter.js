@@ -1,32 +1,27 @@
-import NewPopuppView from '../view/popupp-details-view.js';
+import NewPopuppView from '../view/popupp-view.js';
 import {remove, render, replace} from '../framework/render.js';
-import {ACTIVATE_MODE} from '../const.js';
 
 
 export default class FilmsPopupPresenter {
   #popupFilmComponent = null;
-  #mainContainersComponent = null;
   #mainBody = null;
-  #cardModel = null;
-  #changeWatchlist = null;
-  #changeFavorite = null;
-  #changeAlredyWatched = null;
-  popupStatus = ACTIVATE_MODE[1];
-  #changeCommentsList = null;
+  #onChangeWatchlist = null;
+  #onChangeFavorite = null;
+  #onChangeAlredyWatched = null;
   #filmsCommentsModel = null;
-  #deleteComment = null;
-  #addComment = null;
+  #onDeleteComment = null;
+  #onAddComment = null;
+  isOpen = false;
 
-  constructor({mainBody, changeWatchlist, changeFavorite, changeAlredyWatched, changeCommentsList,
+  constructor({mainBody, changeWatchlist, changeFavorite, changeAlredyWatched,
     filmsCommentsModel, deleteComment, addComment}) {
     this.#mainBody = mainBody;
-    this.#changeWatchlist = changeWatchlist;
-    this.#changeFavorite = changeFavorite;
-    this.#changeAlredyWatched = changeAlredyWatched;
-    this.#changeCommentsList = changeCommentsList;
+    this.#onChangeWatchlist = changeWatchlist;
+    this.#onChangeFavorite = changeFavorite;
+    this.#onChangeAlredyWatched = changeAlredyWatched;
     this.#filmsCommentsModel = filmsCommentsModel;
-    this.#deleteComment = deleteComment;
-    this.#addComment = addComment;
+    this.#onDeleteComment = deleteComment;
+    this.#onAddComment = addComment;
 
   }
 
@@ -40,30 +35,28 @@ export default class FilmsPopupPresenter {
       onBtnClick: () => {
         this.#onClickClosedPopupDetails();
       },
-      changeWatchlist: this.#changeWatchlist,
-      changeFavorite: this.#changeFavorite,
-      changeAlredyWatched: this.#changeAlredyWatched,
-      changeCommentsList: this.#changeCommentsList,
+      changeWatchlist: this.#onChangeWatchlist,
+      changeFavorite: this.#onChangeFavorite,
+      changeAlredyWatched: this.#onChangeAlredyWatched,
       filmsCommentsModel: this.#filmsCommentsModel,
-      deleteComment: this.#deleteComment,
-      addComment: this.#addComment
+      deleteComment: this.#onDeleteComment,
+      addComment: this.#onAddComment
 
     });
 
     if (prevPopupFilmComponent === null) {
+      this.isOpen = true;
       render(this.#popupFilmComponent, this.#mainBody);
       this.#mainBody.classList.add('hide-overflow');
       document.addEventListener('keydown', this.onEscKeyClosed );
       return;
     }
-
+    this.isOpen = true;
     if (this.#mainBody.contains(prevPopupFilmComponent.element)) {
       replace( this.#popupFilmComponent, prevPopupFilmComponent);
+      this.#popupFilmComponent.saveScroll(card.scrollPosition);
     }
 
-    remove(prevPopupFilmComponent);
-
-    document.addEventListener('keydown', this.onEscKeyClosed );
   }
 
   //закрытие поп аппа на ескейп
@@ -80,7 +73,7 @@ export default class FilmsPopupPresenter {
   destroy (){
     remove(this.#popupFilmComponent);
     document.removeEventListener('keydown', this.onEscKeyClosed);
-    this.popupStatus = ACTIVATE_MODE[1];
+    this.isOpen = false;
   }
 
 
@@ -89,10 +82,48 @@ export default class FilmsPopupPresenter {
       this.#mainBody.classList.remove('hide-overflow');
       this.#mainBody.removeChild(this.#popupFilmComponent.element);
       document.removeEventListener('keydown', this.onEscKeyClosed);
-      this.popupStatus = ACTIVATE_MODE[1];
+      this.isOpen = false;
     }
 
   };
 
+  setSaving() {
+
+    if (!this.isOpen) {
+      return;
+    }
+    this.#popupFilmComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+
+  setDeleting (id) {
+    if(!this.isOpen) {
+      return;
+    }
+    this.#popupFilmComponent.updateElement({
+      isDisablet: true,
+      isDeleting: true,
+      deletingId: id
+    });
+  }
+
+  setAborting(idToError) {
+    if(!this.isOpen) {
+      return;
+    }
+    const resetFormState = () => {
+      this.#popupFilmComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#popupFilmComponent.targetShake(idToError, resetFormState);
+
+  }
 
 }
